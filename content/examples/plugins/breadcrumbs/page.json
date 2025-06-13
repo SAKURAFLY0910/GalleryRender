@@ -1,0 +1,16 @@
+{
+    "description": "The optional breadcrumbs menu shows the visitor's location on the website and allows them to navigate to parent folders. Useful for deep and complex gallery structures.",
+    "image": "examples\/assets\/layered-cake.jpg",
+    "context": {
+        "classes": "separator"
+    },
+    "gallery": {
+        "width": "wide",
+        "assets": "examples\/assets\/"
+    },
+    "plugins": {
+        "breadcrumbs": {
+            "enabled": true
+        }
+    }
+}

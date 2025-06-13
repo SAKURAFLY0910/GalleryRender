@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- X3 website by www.photo.gallery -->
+{% spaceless %}
+
+{# base_url from page.settings.base_url #}
+{% set baseurl = page.base_url %}
+
+{# Global page vars #}
+{% set absolutepath = baseurl|addprotocol %}
+{% set rootpath = baseurl|replace({(page.domain_name): ''}) %}
+{% set assetspath = page.settings.cdn_files|trim('/')|default(rootpath) %}
+{% set absolutepath_page = page.permalink|setpath(absolutepath) %}
+{% set rootpath_page = page.permalink|setpath(rootpath) %}
+
+{# Preview image #}
+{% set preview_image %}{% include 'partials/preview-image.html' %}{% endset %}
+{% if preview_image is empty %}{% set preview_image = get_default_preview_image() %}{% endif %}
+
+{# Preview image full path #}
+{% set preview_image_full = page.settings.cdn_files|trim('/')|default(absolutepath) ~ preview_image|trim('.') %}
+
+{# core paths #}
+{% set local_public = rootpath ~ '/app/public' %}
+{% set local_js = local_public ~ '/js/' ~ page.x3_version ~ '/x3.min.js' %}
+{% set local_css = local_public ~ '/css/' ~ page.x3_version ~ '/x3.skin.' ~ page.style.skin.skin ~ '.css' %}
+{% if page.settings.cdn_core %}
+	{% set core_js = 'https://cdn.jsdelivr.net/npm/x3.photo.gallery@' ~ page.x3_version ~ '/js/x3.min.js' %}
+	{% set core_css = 'https://cdn.jsdelivr.net/npm/x3.photo.gallery@' ~ page.x3_version ~ '/css/x3.skin.' ~ page.style.skin.skin ~ '.css' %}
+{% else %}
+	{% set core_js = local_js %}
+	{% set core_css = local_css %}
+{% endif %}
+
+{# VARS #}
+{% set page_title = '' %}
+{% set page_description = '' %}
+
+{# FILE #}
+{% if page.template_name == 'file' %}
+
+	{# image vars #}
+	{% set myimage = page.file_path %}
+
+	{# image_extended allows image navigation and page-specific settings from parent page / disabled by default because can be slow #}
+	{% if page.settings.image_extended %}
+		{% set dirname = page.permalink|dirname %}
+		{% if dirname == '.' or dirname is empty %}{% set dirname = '/' %}{% endif %}
+		{% set parent = get(dirname) %}
+	{% endif %}
+
+	{# settings from parent page or default (page) #}
+	{% set settings = parent|default(page) %}
+
+	{# redirect if link #}
+	{% if myimage.link %}
+		{{ redirect(myimage.link) }}
+
+	{# create meta #}
+	{% else %}
+
+		{% set folder_path = assetspath ~ page.file_path|dirname|trim(".") ~ '/' %}
+		{% set page_title = getDefault(myimage.title, settings.gallery.image.title, settings.gallery.image.title_include, myimage.name)|striptags('<a><span><em><i><b><strong><small><s><mark>')|replace({'{file_name}': myimage.file_name|removeExtension, '{file_name_ext}': myimage.file_name, '{path}': folder_path, '{image_path}': folder_path ~ myimage.file_name})|default(myimage.name) %}
+		{% set image_description = getDefault(myimage.description, settings.gallery.image.description, settings.gallery.image.description_include, myimage.name)|striptags('<a><span><em><i><b><strong><small><s><br><mark><img><kbd><code><button>')|replace({'{file_name}': myimage.file_name|removeExtension, '{file_name_ext}': myimage.file_name, '{path}': folder_path, '{image_path}': folder_path ~ myimage.file_name}) %}
+		{% set page_description = image_description|default(page_title~' | '~settings.title) %}
+	{% endif %}
+
+
+	{# set file template #}
+	{% set template = 'partials/file.html' %}
+{# PAGE #}
+{% else %}
+	{% set page_title = page.title %}
+	{% set page_description = page.description %}
+	{% set template = 'partials/content.html' %}
+{% endif %}
+
+{# BUILD #}
+{% include 'partials/head.html' %}
+{% include template %}
+{% include 'partials/footer.html' %}
+{% endspaceless %}
+
+<!-- X3 website by www.photo.gallery -->
