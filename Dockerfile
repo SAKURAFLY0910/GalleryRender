@@ -1,11 +1,15 @@
 # 使用官方 PHP + Apache 镜像
 FROM php:8.2-apache
 
-# 安装 zip 支持所需的依赖
+    
 RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
-    && docker-php-ext-install zip
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd zip
 
 # 拷贝你的 PHP 项目到容器中
 COPY . /var/www/html/
