@@ -1,0 +1,19 @@
+{
+  "title": "Cloudinary Gallery",
+  "description": "Gallery using Cloudinary-hosted images.",
+  "remote": true,
+  "files": [
+    {
+      "file": "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1710000000/photo1.jpg",
+      "caption": "Sunset over the ocean"
+    },
+    {
+      "file": "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1710000000/photo2.jpg",
+      "caption": "Mountains in the morning"
+    },
+    {
+      "file": "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v1710000000/photo3.jpg",
+      "caption": "City skyline at night"
+    }
+  ]
+}
