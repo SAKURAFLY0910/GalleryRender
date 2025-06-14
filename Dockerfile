@@ -1,17 +1,14 @@
+# 使用官方 PHP + Apache 镜像
 FROM php:8.2-apache
 
-# 安装依赖并启用 zip 和 gd 扩展
+# 安装 zip 支持所需的依赖
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install zip gd
+    libzip-dev \
+    && docker-php-ext-install zip
 
-# 拷贝你的 PHP 项目代码
+# 拷贝你的 PHP 项目到容器中
 COPY . /var/www/html/
 
-# 启用 Apache 重写模块（如果需要）
+# 开启 Apache 的 mod_rewrite（如有需要）
 RUN a2enmod rewrite
