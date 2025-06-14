@@ -14,18 +14,21 @@ class Config {
 # Includes
 include './app/cache.inc.php';
 include './app/helpers.inc.php';
-include './app/x3.inc.php';
+include './app/stacey.inc.php';
 include './app/x3.config.inc.php';
 include './app/asset-types/page.inc.php';
 
+# Set global X3 Config
+$x3_config = getX3Config();
+
 # Show X3 Diagnostics?
-if(X3Config::$config["settings"]["diagnostics"] || isset($_GET["diagnostics"])) {
+if($x3_config["settings"]["diagnostics"] || isset($_GET["diagnostics"])) {
 	$show_x3_diagnostics = true;
 	require_once './app/x3.diagnostics.php';
 
 # Start X3 App
 } else {
-	new X3($_GET);
+	new Stacey($_GET);
 }
 
 ?>

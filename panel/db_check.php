@@ -1,19 +1,12 @@
 
 <?php
 
-$login_required = true;
+# Display ALL errors to detect any server issues
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(-1);
 
-// login required
-if($login_required){
-	if(!isset($core)){
-		require_once 'filemanager_core.php';
-		$core = new filemanager_core();
-	}
-
-	if(!$core->isLogin()) exit('<strong>Forbidden</strong><br>You need to <a href=".">login</a> to use the X3 DB checker.');
-}
-
-$css_path = dirname(dirname($_SERVER['SCRIPT_NAME']));
+$css_path = dirname(dirname($_SERVER['PHP_SELF']));
 if(substr($css_path, -1) !== '/') $css_path .= '/';
 
 # Check if POSTED data from ajax
@@ -94,20 +87,14 @@ if(function_exists('mysqli_connect')){
 echo $warning;
 
 # Output initial html if not POST
-else:
-
-# Display ALL errors to detect any server issues
-ini_set('display_errors',1);
-ini_set('display_startup_errors',1);
-error_reporting(-1);
-?>
+else: ?>
 
 <head>
 <title>X3 Database Connection checker</title>
 <meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,600" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<link href="<?php echo $css_path ?>app/public/css/diagnostics.css?v=3.28.0" rel="stylesheet" type="text/css">
+<script src='https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min.js'></script>
+<link href="<?php echo $css_path ?>app/public/css/diagnostics.css?v=3.23.0" rel="stylesheet" type="text/css">
 <style><!--
 .x3-diagnostics-wrapper {
 	max-width: 500px;
@@ -115,11 +102,11 @@ error_reporting(-1);
 --></style>
 </head>
 <body>
-	<div class="x3-diagnostics">
+	<div class=x3-diagnostics>
 		<h1>X3 Database Connection Checker</h1>
-		<div class="x3-diagnostics-wrapper">
-			<div class="report"><div class="x3-diagnostics-item x3-diagnostics-neutral" style="text-align: center;">Database connection diagnostics will appear here.</div></div>
-			<div class="form-container"></div>
+		<div class=x3-diagnostics-wrapper>
+			<div class=report><div class="x3-diagnostics-item x3-diagnostics-neutral" style="text-align: center;">Database connection diagnostics will appear here.</div></div>
+			<div class=form-container></div>
 		</div>
 	</div>
 <script>

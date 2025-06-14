@@ -3,7 +3,6 @@ if (!isset($core))
 {
 	require_once 'filemanager_core.php';
 	$core = new filemanager_core();
-	if($core->enforce_url()) return;
 }
 if ($core->isLogin())
 {

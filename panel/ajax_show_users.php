@@ -135,7 +135,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                     }
                     $core->page($page, $count, 10);
 ?>
-                    <div class="container-fluid x3-users">
+                    <div class="container x3-users">
                         <div class="row">
                             <div class="col-md-6">
                                 <h3><?php language_filter("Users")?></h3>

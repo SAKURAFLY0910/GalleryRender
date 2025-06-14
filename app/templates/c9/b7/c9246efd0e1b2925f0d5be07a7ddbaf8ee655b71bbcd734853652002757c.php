@@ -28,7 +28,7 @@ class __TwigTemplate_c9b7c9246efd0e1b2925f0d5be07a7ddbaf8ee655b71bbcd73485365200
         // line 7
         $context["page_description"] = $this->getAttribute((isset($context["p"]) ? $context["p"] : null), "description");
         // line 8
-        $context["content"] = call_user_func_array($this->env->getFilter('escapecode')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, call_user_func_array($this->env->getFilter('replace')->getCallable(), array(((((call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "include"), "content_prepend"))) . " ") . $this->getAttribute((isset($context["p"]) ? $context["p"] : null), "content")) . " ") . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "include"), "content_append")))), array("{{files}}" => ((isset($context["assetspath"]) ? $context["assetspath"] : null) . "/content/custom/files"), "[contact]" => "<form data-abide class=\"contactform\"><div><input required type=\"text\" name=\"name\" placeholder=\"Name\"></div><div><input required type=\"email\" name=\"email\" placeholder=\"Email\"></div><div><textarea required rows=6 name=\"message\" placeholder=\"What&#39;s up?\"></textarea></div><button type=\"submit\">Send</button></form>")))))));
+        $context["content"] = call_user_func_array($this->env->getFilter('escapecode')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array(call_user_func_array($this->env->getFilter('replace')->getCallable(), array(((((call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "include"), "content_prepend"))) . " ") . $this->getAttribute((isset($context["p"]) ? $context["p"] : null), "content")) . " ") . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "include"), "content_append")))), array("{{files}}" => ((isset($context["assetspath"]) ? $context["assetspath"] : null) . "/content/custom/files"), "[contact]" => "<form data-abide class=\"contactform\"><div><input required type=\"text\" name=\"name\" placeholder=\"Name\"></div><div><input required type=\"email\" name=\"email\" placeholder=\"Email\"></div><div><textarea required rows=6 name=\"message\" placeholder=\"What&#39;s up?\"></textarea></div><button type=\"submit\">Send</button></form>")))))));
         // line 9
         echo "
 ";
@@ -51,218 +51,219 @@ class __TwigTemplate_c9b7c9246efd0e1b2925f0d5be07a7ddbaf8ee655b71bbcd73485365200
             $context["date_class"] = "date";
         }
         // line 19
-        $context["time_tag"] = (((((("<time itemprop=\"dateCreated\" datetime=\"" . call_user_func_array($this->env->getFilter('date')->getCallable(), array($this->env, (isset($context["date"]) ? $context["date"] : null), "c"))) . "\" class=\"") . (isset($context["date_class"]) ? $context["date_class"] : null)) . "\">") . (isset($context["date_formatted"]) ? $context["date_formatted"] : null)) . "</time>");
+        $context["time_tag"] = (((((("<time itemprop=dateCreated datetime=\"" . call_user_func_array($this->env->getFilter('date')->getCallable(), array($this->env, (isset($context["date"]) ? $context["date"] : null), "c"))) . "\" class=\"") . (isset($context["date_class"]) ? $context["date_class"] : null)) . "\">") . (isset($context["date_formatted"]) ? $context["date_formatted"] : null)) . "</time>");
         // line 20
         echo "
 ";
+        // line 23
+        $context["items"] = call_user_func_array($this->env->getFilter('split')->getCallable(), array($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"), ","));
         // line 24
-        $context["items"] = call_user_func_array($this->env->getFilter('split')->getCallable(), array(((($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "plugins"), "breadcrumbs"), "enabled") && !twig_in_filter("breadcrumbs", $this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items")))) ? (((twig_in_filter("description", $this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"))) ? (call_user_func_array($this->env->getFilter('replace')->getCallable(), array($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"), array("description" => "description,breadcrumbs")))) : (((twig_in_filter("title", $this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"))) ? (call_user_func_array($this->env->getFilter('replace')->getCallable(), array($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"), array("title" => "title,breadcrumbs")))) : (("breadcrumbs," . $this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"))))))) : ($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "items"))), ","));
-        // line 26
         echo "
 ";
-        // line 28
+        // line 26
         $context['_parent'] = (array) $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["items"]) ? $context["items"] : null));
         foreach ($context['_seq'] as $context["_key"] => $context["item"]) {
-            // line 29
+            // line 27
             echo "
 \t";
-            // line 31
+            // line 29
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "title")) {
-                // line 32
-                echo "\t<h1 class=\"title style-icon\"><span>";
+                // line 30
+                echo "\t<h1 class='title style-icon'><span>";
                 echo (isset($context["page_title"]) ? $context["page_title"] : null);
                 echo "</span></h1>
 \t";
             }
-            // line 34
+            // line 32
             echo "
 \t";
-            // line 36
+            // line 34
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "label")) {
-                // line 37
-                echo "\t<h1 class=\"title\"><span>";
+                // line 35
+                echo "\t<h1 class='title'><span>";
                 echo $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "label");
                 echo "</span></h1>
 \t";
             }
-            // line 39
+            // line 37
             echo "
 \t";
-            // line 41
+            // line 39
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "amount")) {
-                // line 42
+                // line 40
                 echo "\t";
-                $context["amount"] = call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, (isset($context["gallery_images"]) ? $context["gallery_images"] : null)));
-                // line 43
-                echo "\t";
-                // line 44
-                echo "\t<h6 class=\"amount amount-";
+                $context["amount"] = call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, $this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "images")));
+                // line 41
+                echo "\t<h6 class=amount><span>";
                 echo (isset($context["amount"]) ? $context["amount"] : null);
-                echo "\" data-lang=\"image";
-                echo ((((isset($context["amount"]) ? $context["amount"] : null) == 1)) ? ("") : ("s"));
-                echo "\">";
-                echo (isset($context["amount"]) ? $context["amount"] : null);
-                echo "</h6>
+                echo " ";
+                echo call_user_func_array($this->env->getFunction('pluralize')->getCallable(), array((isset($context["amount"]) ? $context["amount"] : null), "image", "images"));
+                echo "</span></h6>
 \t";
             }
-            // line 46
+            // line 43
             echo "
 \t";
-            // line 48
+            // line 45
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "folders_amount")) {
-                // line 49
+                // line 46
                 echo "\t";
                 $context["folders_amount"] = $this->getAttribute((isset($context["folder"]) ? $context["folder"] : null), "children_count");
-                // line 50
-                echo "\t";
-                // line 51
-                echo "\t<h6 class=\"folder_amount folder-amount-";
+                // line 47
+                echo "\t<h6 class=folder_amount><span>";
                 echo (isset($context["folders_amount"]) ? $context["folders_amount"] : null);
-                echo "\" data-lang=\"folder";
-                echo ((((isset($context["folders_amount"]) ? $context["folders_amount"] : null) == 1)) ? ("") : ("s"));
-                echo "\">";
-                echo (isset($context["folders_amount"]) ? $context["folders_amount"] : null);
-                echo "</h6>
+                echo " ";
+                echo call_user_func_array($this->env->getFunction('pluralize')->getCallable(), array((isset($context["folders_amount"]) ? $context["folders_amount"] : null), "album", "albums"));
+                echo "</span></h6>
 \t";
             }
-            // line 53
+            // line 49
             echo "
 \t";
-            // line 55
+            // line 51
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "date")) {
-                // line 56
-                echo "\t<h6 class=\"date\">";
+                // line 52
+                echo "\t<h6 class=date>";
                 echo (isset($context["time_tag"]) ? $context["time_tag"] : null);
                 echo "</h6>
 \t";
             }
-            // line 58
+            // line 54
             echo "
 \t";
-            // line 60
+            // line 56
             echo "\t";
             if ((((isset($context["item"]) ? $context["item"] : null) == "description") && (!call_user_func_array($this->env->getTest('empty')->getCallable(), array((isset($context["page_description"]) ? $context["page_description"] : null)))))) {
-                // line 61
-                echo "\t<h2 class=\"subheader\">";
+                // line 57
+                echo "\t<h2 class=subheader>";
                 echo (isset($context["page_description"]) ? $context["page_description"] : null);
                 echo "</h2>
 \t";
             }
-            // line 63
+            // line 59
             echo "
 \t";
-            // line 65
+            // line 61
             echo "\t";
             if (((isset($context["item"]) ? $context["item"] : null) == "preview")) {
-                // line 66
+                // line 62
                 echo "
 \t";
-                // line 68
+                // line 64
                 echo "\t";
                 if ($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "crop"), "enabled")) {
-                    // line 69
+                    // line 65
                     echo "\t\t";
                     $context["crop_ratio"] = (($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "crop"), "crop"), 1, array(), "array") / $this->getAttribute($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "crop"), "crop"), 0, array(), "array")) * 100);
-                    // line 70
-                    echo "\t\t";
-                    $context["data_crop"] = ((((" data-crop=\"" . $this->getAttribute($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "crop"), "crop"), 0, array(), "array")) . ".") . $this->getAttribute($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "crop"), "crop"), 1, array(), "array")) . "\"");
-                    // line 71
+                    // line 66
                     echo "\t";
                 }
-                // line 72
+                // line 67
                 echo "
 \t";
-                // line 74
+                // line 69
                 echo "\t";
-                $context["preview_image_url"] = ((isset($context["assetspath"]) ? $context["assetspath"] : null) . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, (isset($context["preview_image"]) ? $context["preview_image"] : null), ".")));
-                // line 75
+                $context["preview_image_url"] = ((isset($context["assetspath"]) ? $context["assetspath"] : null) . call_user_func_array($this->env->getFilter('trim')->getCallable(), array((isset($context["preview_image"]) ? $context["preview_image"] : null), ".")));
+                // line 70
                 echo "
 \t";
-                // line 77
+                // line 72
                 echo "  ";
                 if (((isset($context["preview_img"]) ? $context["preview_img"] : null) == "./app/public/images/default.png")) {
-                    // line 78
+                    // line 73
                     echo "  \t";
                     $context["imgInfo"] = array(0 => 1280, 1 => 1280);
-                    // line 79
+                    // line 74
                     echo "  \t";
                     $context["image_ratio"] = 100;
-                    // line 80
+                    // line 75
                     echo "  ";
                 } else {
-                    // line 81
+                    // line 76
                     echo "\t\t";
                     $context["imgInfo"] = call_user_func_array($this->env->getFunction('getimginfo')->getCallable(), array((isset($context["preview_image"]) ? $context["preview_image"] : null)));
-                    // line 82
+                    // line 77
                     echo "\t\t";
                     $context["image_ratio"] = ((array_key_exists("crop_ratio", $context)) ? (call_user_func_array($this->env->getFilter('default')->getCallable(), array((isset($context["crop_ratio"]) ? $context["crop_ratio"] : null), (($this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 1, array(), "array") / $this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 0, array(), "array")) * 100)))) : ((($this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 1, array(), "array") / $this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 0, array(), "array")) * 100)));
-                    // line 83
+                    // line 78
                     echo "  ";
                 }
-                // line 84
+                // line 79
                 echo "
 \t";
-                // line 86
-                echo "\t<div class=\"preview-image x-frame-medium-up images\">
-\t\t<a class=\"img-link item-link item popup\" data-width=\"";
-                // line 87
+                // line 81
+                echo "\t<div class='preview-image x-frame-medium-up images'>
+\t\t<a class='img-link item-link item popup' data-options='w:";
+                // line 82
                 echo $this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 0, array(), "array");
-                echo "\" data-height=\"";
+                echo ";h:";
                 echo $this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 1, array(), "array");
-                echo "\" href=\".\" data-popup-href=\"";
-                echo call_user_func_array($this->env->getFilter('e')->getCallable(), array($this->env, (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null)));
-                echo "\" data-image=\"";
-                echo call_user_func_array($this->env->getFilter('e')->getCallable(), array($this->env, (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null)));
-                echo "\">
+                echo "' href='.' data-popup-href='";
+                echo (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null);
+                echo "' data-image='";
+                echo (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null);
+                echo "'";
+                if ((isset($context["crop_ratio"]) ? $context["crop_ratio"] : null)) {
+                    echo " data-crop=true";
+                }
+                echo ">
 \t\t\t<figure>
-\t\t\t\t<div class=\"image-container\" style=\"padding-bottom:";
-                // line 89
+\t\t\t\t<div class='image-container' style='padding-bottom:";
+                // line 84
                 echo (isset($context["image_ratio"]) ? $context["image_ratio"] : null);
-                echo "%;\">
-\t\t\t\t\t<img data-src=\"";
-                // line 90
-                echo call_user_func_array($this->env->getFilter('e')->getCallable(), array($this->env, (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null)));
-                echo "\" data-width=\"";
-                echo $this->getAttribute((isset($context["imgInfo"]) ? $context["imgInfo"] : null), 0, array(), "array");
-                echo "\"";
-                echo (isset($context["data_crop"]) ? $context["data_crop"] : null);
-                echo " alt=\"\">
+                echo "%;'>
+\t\t\t\t\t<img data-src='";
+                // line 85
+                echo (isset($context["preview_image_url"]) ? $context["preview_image_url"] : null);
+                echo "' alt=''>
 \t\t\t\t</div>
 
 \t\t\t";
-                // line 94
+                // line 89
                 echo "\t\t\t";
                 if ($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "caption"), "enabled")) {
-                    // line 95
+                    // line 90
                     echo "        <figcaption>
 
         \t";
-                    // line 98
+                    // line 93
                     echo "\t\t\t\t\t";
                     $context["caption_items"] = call_user_func_array($this->env->getFilter('split')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["context"]) ? $context["context"] : null), "caption"), "items"), ","));
-                    // line 99
+                    // line 94
                     echo "
         \t";
-                    // line 101
+                    // line 96
                     echo "        \t";
                     $context['_parent'] = (array) $context;
                     $context['_seq'] = twig_ensure_traversable((isset($context["caption_items"]) ? $context["caption_items"] : null));
                     foreach ($context['_seq'] as $context["_key"] => $context["item"]) {
+                        // line 97
+                        echo "
+        \t\t";
+                        // line 99
+                        echo "        \t\t";
+                        if (((isset($context["item"]) ? $context["item"] : null) == "title")) {
+                            // line 100
+                            echo "        \t\t<span class='title'>";
+                            echo call_user_func_array($this->env->getFilter('replace')->getCallable(), array((isset($context["page_title"]) ? $context["page_title"] : null), array("<a" => "<span", "</a>" => "</span>", " href=" => " data-href=", " target=" => " data-target=")));
+                            echo "</span>
+        \t\t";
+                        }
                         // line 102
                         echo "
         \t\t";
                         // line 104
                         echo "        \t\t";
-                        if (((isset($context["item"]) ? $context["item"] : null) == "title")) {
+                        if (((isset($context["item"]) ? $context["item"] : null) == "label")) {
                             // line 105
-                            echo "        \t\t<span class=\"title\">";
-                            echo call_user_func_array($this->env->getFilter('replace')->getCallable(), array((isset($context["page_title"]) ? $context["page_title"] : null), array("<a" => "<span", "</a>" => "</span>", " href=" => " data-href=", " target=" => " data-target=")));
+                            echo "        \t\t<span class='title'>";
+                            echo $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "label");
                             echo "</span>
         \t\t";
                         }
@@ -271,31 +272,32 @@ class __TwigTemplate_c9b7c9246efd0e1b2925f0d5be07a7ddbaf8ee655b71bbcd73485365200
         \t\t";
                         // line 109
                         echo "        \t\t";
-                        if (((isset($context["item"]) ? $context["item"] : null) == "label")) {
+                        if (((isset($context["item"]) ? $context["item"] : null) == "amount")) {
                             // line 110
-                            echo "        \t\t<span class=\"title\">";
-                            echo $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "label");
+                            echo "\t\t\t\t\t\t";
+                            $context["amount"] = call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, $this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "images")));
+                            // line 111
+                            echo "        \t\t<span class='amount'>";
+                            echo (isset($context["amount"]) ? $context["amount"] : null);
+                            echo " ";
+                            echo call_user_func_array($this->env->getFunction('pluralize')->getCallable(), array((isset($context["amount"]) ? $context["amount"] : null), "image", "images"));
                             echo "</span>
         \t\t";
                         }
-                        // line 112
+                        // line 113
                         echo "
         \t\t";
-                        // line 114
+                        // line 115
                         echo "        \t\t";
-                        if (((isset($context["item"]) ? $context["item"] : null) == "amount")) {
-                            // line 115
-                            echo "\t\t\t\t\t\t";
-                            $context["amount"] = call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, (isset($context["gallery_images"]) ? $context["gallery_images"] : null)));
+                        if (((isset($context["item"]) ? $context["item"] : null) == "folders_amount")) {
                             // line 116
                             echo "        \t\t";
+                            $context["folders_amount"] = $this->getAttribute((isset($context["folder"]) ? $context["folder"] : null), "children_count");
                             // line 117
-                            echo "        \t\t<span class=\"amount amount-";
-                            echo (isset($context["amount"]) ? $context["amount"] : null);
-                            echo "\" data-lang=\"image";
-                            echo ((((isset($context["amount"]) ? $context["amount"] : null) == 1)) ? ("") : ("s"));
-                            echo "\">";
-                            echo (isset($context["amount"]) ? $context["amount"] : null);
+                            echo "        \t\t<span class='folder_amount'>";
+                            echo (isset($context["folders_amount"]) ? $context["folders_amount"] : null);
+                            echo " ";
+                            echo call_user_func_array($this->env->getFunction('pluralize')->getCallable(), array((isset($context["folders_amount"]) ? $context["folders_amount"] : null), "album", "albums"));
                             echo "</span>
         \t\t";
                         }
@@ -304,101 +306,70 @@ class __TwigTemplate_c9b7c9246efd0e1b2925f0d5be07a7ddbaf8ee655b71bbcd73485365200
         \t\t";
                         // line 121
                         echo "        \t\t";
-                        if (((isset($context["item"]) ? $context["item"] : null) == "folders_amount")) {
-                            // line 122
-                            echo "        \t\t";
-                            $context["folders_amount"] = $this->getAttribute((isset($context["folder"]) ? $context["folder"] : null), "children_count");
-                            // line 123
-                            echo "        \t\t";
-                            // line 124
-                            echo "        \t\t<span class=\"folder_amount folder-amount-";
-                            echo (isset($context["folders_amount"]) ? $context["folders_amount"] : null);
-                            echo "\" data-lang=\"folder";
-                            echo ((((isset($context["folders_amount"]) ? $context["folders_amount"] : null) == 1)) ? ("") : ("s"));
-                            echo "\">";
-                            echo (isset($context["folders_amount"]) ? $context["folders_amount"] : null);
-                            echo "</span>
-        \t\t";
-                        }
-                        // line 126
-                        echo "
-        \t\t";
-                        // line 128
-                        echo "        \t\t";
                         if (((isset($context["item"]) ? $context["item"] : null) == "date")) {
-                            // line 129
+                            // line 122
                             echo "\t\t\t\t\t\t\t";
                             echo (isset($context["time_tag"]) ? $context["time_tag"] : null);
                             echo "
         \t\t";
                         }
-                        // line 131
+                        // line 124
                         echo "
         \t\t";
-                        // line 133
+                        // line 126
                         echo "        \t\t";
                         if ((((isset($context["item"]) ? $context["item"] : null) == "description") && (!call_user_func_array($this->env->getTest('empty')->getCallable(), array((isset($context["page_description"]) ? $context["page_description"] : null)))))) {
-                            // line 134
-                            echo "        \t\t\t<span class=\"description\">";
+                            // line 127
+                            echo "        \t\t\t<span class='description'>";
                             echo call_user_func_array($this->env->getFilter('replace')->getCallable(), array((isset($context["page_description"]) ? $context["page_description"] : null), array("<a" => "<span", "</a>" => "</span>", " href=" => " data-href=", " target=" => " data-target=")));
                             echo "</span>
         \t\t";
                         }
-                        // line 136
+                        // line 129
                         echo "
         \t\t";
-                        // line 138
+                        // line 131
                         echo "        \t\t";
                         if ((((isset($context["item"]) ? $context["item"] : null) == "content") && (!call_user_func_array($this->env->getTest('empty')->getCallable(), array((isset($context["content"]) ? $context["content"] : null)))))) {
-                            // line 139
-                            echo "        \t\t\t<span class=\"content\">";
+                            // line 132
+                            echo "        \t\t\t<span class='content'>";
                             echo (isset($context["content"]) ? $context["content"] : null);
                             echo "</span>
         \t\t";
                         }
-                        // line 141
+                        // line 134
                         echo "
         \t";
                     }
                     $_parent = $context['_parent'];
                     unset($context['_seq'], $context['_iterated'], $context['_key'], $context['item'], $context['_parent'], $context['loop']);
                     $context = array_intersect_key($context, $_parent) + $_parent;
-                    // line 143
+                    // line 136
                     echo "        </figcaption>
       ";
                 }
-                // line 145
+                // line 138
                 echo "
 \t\t\t</figure>
 \t\t</a>
 \t</div>
 \t";
             }
-            // line 150
+            // line 143
             echo "
 \t";
-            // line 152
-            echo "\t";
-            if ((((isset($context["item"]) ? $context["item"] : null) == "breadcrumbs") && $this->getAttribute($this->getAttribute($this->getAttribute((isset($context["p"]) ? $context["p"] : null), "plugins"), "breadcrumbs"), "enabled"))) {
-                // line 153
-                echo "\t\t<div class=\"x3-breadcrumbs x3-breadcrumbs-primary\"></div>
-\t";
-            }
-            // line 155
-            echo "
-\t";
-            // line 157
+            // line 145
             echo "\t";
             if ((((isset($context["item"]) ? $context["item"] : null) == "content") && (!call_user_func_array($this->env->getTest('empty')->getCallable(), array((isset($context["content"]) ? $context["content"] : null)))))) {
-                // line 158
+                // line 146
                 echo "\t\t";
-                // line 160
-                echo "\t\t<div class=\"content\">";
+                // line 148
+                echo "\t\t<div class='content'>";
                 echo (isset($context["content"]) ? $context["content"] : null);
                 echo "</div>
 \t";
             }
-            // line 162
+            // line 150
             echo "
 ";
         }
@@ -419,6 +390,6 @@ class __TwigTemplate_c9b7c9246efd0e1b2925f0d5be07a7ddbaf8ee655b71bbcd73485365200
 
     public function getDebugInfo()
     {
-        return array (  402 => 162,  396 => 160,  394 => 158,  391 => 157,  388 => 155,  384 => 153,  381 => 152,  378 => 150,  371 => 145,  367 => 143,  360 => 141,  354 => 139,  351 => 138,  348 => 136,  342 => 134,  339 => 133,  336 => 131,  330 => 129,  327 => 128,  324 => 126,  314 => 124,  312 => 123,  309 => 122,  306 => 121,  303 => 119,  293 => 117,  291 => 116,  288 => 115,  285 => 114,  282 => 112,  276 => 110,  273 => 109,  270 => 107,  264 => 105,  261 => 104,  258 => 102,  253 => 101,  250 => 99,  247 => 98,  243 => 95,  240 => 94,  230 => 90,  226 => 89,  215 => 87,  212 => 86,  209 => 84,  206 => 83,  203 => 82,  200 => 81,  197 => 80,  194 => 79,  191 => 78,  188 => 77,  185 => 75,  182 => 74,  179 => 72,  176 => 71,  173 => 70,  161 => 65,  158 => 63,  149 => 60,  146 => 58,  140 => 56,  137 => 55,  134 => 53,  124 => 51,  116 => 48,  113 => 46,  103 => 44,  83 => 36,  80 => 34,  54 => 19,  47 => 16,  36 => 11,  27 => 6,  25 => 5,  174 => 69,  170 => 69,  167 => 68,  164 => 66,  157 => 62,  154 => 60,  120 => 58,  110 => 48,  94 => 41,  86 => 37,  84 => 36,  77 => 32,  68 => 29,  56 => 20,  22 => 3,  139 => 52,  121 => 48,  118 => 47,  115 => 45,  91 => 39,  69 => 29,  66 => 27,  61 => 26,  57 => 22,  51 => 19,  48 => 17,  44 => 15,  30 => 7,  23 => 4,  108 => 47,  101 => 43,  98 => 42,  95 => 41,  92 => 39,  88 => 35,  85 => 33,  81 => 34,  78 => 30,  74 => 32,  71 => 31,  64 => 28,  59 => 24,  52 => 19,  49 => 15,  43 => 14,  34 => 9,  163 => 68,  156 => 67,  152 => 61,  148 => 62,  145 => 61,  142 => 54,  138 => 57,  135 => 56,  131 => 53,  128 => 50,  125 => 49,  122 => 50,  119 => 49,  117 => 56,  114 => 50,  111 => 44,  105 => 45,  102 => 42,  99 => 43,  96 => 42,  93 => 37,  90 => 36,  87 => 35,  82 => 34,  79 => 33,  76 => 32,  73 => 30,  70 => 29,  67 => 23,  65 => 26,  62 => 21,  60 => 23,  58 => 22,  55 => 17,  53 => 20,  46 => 16,  42 => 15,  39 => 12,  37 => 10,  35 => 10,  33 => 9,  31 => 8,  29 => 7,  26 => 5,  24 => 4,  50 => 17,  45 => 6,  40 => 13,  38 => 12,  21 => 3,  19 => 1,);
+        return array (  373 => 150,  367 => 148,  365 => 146,  362 => 145,  359 => 143,  352 => 138,  348 => 136,  341 => 134,  335 => 132,  332 => 131,  329 => 129,  323 => 127,  320 => 126,  317 => 124,  311 => 122,  308 => 121,  305 => 119,  294 => 116,  291 => 115,  288 => 113,  280 => 111,  277 => 110,  274 => 109,  271 => 107,  265 => 105,  262 => 104,  259 => 102,  253 => 100,  250 => 99,  247 => 97,  239 => 94,  232 => 90,  229 => 89,  219 => 84,  204 => 82,  201 => 81,  192 => 77,  186 => 75,  183 => 74,  180 => 73,  156 => 62,  153 => 61,  150 => 59,  144 => 57,  141 => 56,  138 => 54,  129 => 51,  118 => 47,  115 => 46,  112 => 45,  109 => 43,  167 => 64,  152 => 59,  117 => 56,  114 => 50,  108 => 47,  99 => 43,  94 => 41,  91 => 39,  48 => 17,  60 => 23,  47 => 16,  42 => 15,  123 => 47,  120 => 58,  106 => 41,  103 => 40,  100 => 38,  96 => 42,  93 => 36,  83 => 34,  80 => 32,  69 => 29,  38 => 12,  86 => 35,  76 => 27,  73 => 30,  66 => 27,  63 => 22,  58 => 20,  56 => 20,  53 => 20,  44 => 16,  36 => 11,  27 => 6,  315 => 115,  312 => 114,  302 => 108,  299 => 107,  297 => 117,  293 => 105,  289 => 104,  287 => 103,  281 => 99,  278 => 97,  273 => 96,  270 => 95,  267 => 93,  261 => 91,  258 => 90,  255 => 88,  249 => 86,  246 => 85,  242 => 96,  236 => 93,  233 => 77,  227 => 75,  224 => 74,  193 => 64,  189 => 76,  176 => 52,  173 => 51,  170 => 66,  164 => 63,  161 => 46,  158 => 44,  148 => 41,  132 => 52,  126 => 49,  122 => 34,  105 => 45,  102 => 28,  61 => 24,  45 => 16,  22 => 3,  92 => 37,  89 => 36,  85 => 24,  81 => 34,  78 => 23,  74 => 30,  71 => 29,  67 => 23,  55 => 19,  52 => 19,  49 => 18,  40 => 13,  34 => 9,  31 => 8,  29 => 7,  26 => 5,  24 => 4,  21 => 2,  223 => 85,  220 => 83,  217 => 82,  215 => 81,  212 => 79,  208 => 71,  205 => 69,  202 => 75,  198 => 79,  195 => 78,  181 => 69,  177 => 72,  174 => 70,  171 => 69,  168 => 67,  165 => 66,  162 => 65,  159 => 64,  157 => 62,  154 => 60,  151 => 42,  145 => 40,  142 => 54,  139 => 37,  137 => 51,  134 => 50,  116 => 45,  113 => 44,  110 => 48,  107 => 45,  104 => 44,  101 => 41,  98 => 40,  95 => 39,  90 => 34,  87 => 38,  84 => 36,  82 => 35,  79 => 33,  77 => 32,  75 => 31,  72 => 29,  68 => 27,  64 => 26,  62 => 25,  59 => 23,  57 => 18,  54 => 19,  50 => 17,  46 => 16,  43 => 14,  41 => 14,  39 => 12,  37 => 9,  35 => 10,  33 => 9,  30 => 8,  28 => 7,  25 => 5,  23 => 3,  19 => 1,);
     }
 }

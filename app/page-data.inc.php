@@ -7,16 +7,16 @@ use \Michelf\MarkdownExtra;
 Class PageData {
 
   static $shared = false;
-  //static $site_updated = false;
+  static $site_updated = false;
   static $page_root = false;
-  //static $current_parent = false;
-  //static $current_siblings = false;
+  static $current_parent = false;
+  static $current_siblings = false;
   static $is_site;
   static $base_url;
   static $protect = true;
   static $hide = false;
 
-  /*static function extract_closest_siblings($siblings, $file_path) {
+  static function extract_closest_siblings($siblings, $file_path) {
     $neighbors = array();
     # flip keys/values
     $siblings = array_flip($siblings);
@@ -33,7 +33,7 @@ Class PageData {
       else $neighbors[] = false;
     }
     return !empty($neighbors) ? $neighbors : array(false, false);
-  }*/
+  }
 
   static function get_parent($file_path, $url) {
     # split file path by slashes
@@ -44,14 +44,14 @@ Class PageData {
     return $parent_path[0] == Config::$content_folder ? array() : $parent_path;
   }
 
-  // X3 get path protected from config/protect
+  // X3 get path protected from config/protect.php
   static function get_protected($route) {
 
   	# get protect object
   	global $protect_ob;
 
   	# Only continue if access is not empty
-    if(empty($protect_ob) || !isset($protect_ob["access"]) || empty($protect_ob["access"])) {
+    if(empty($protect_ob) || empty($protect_ob["access"])) {
     	self::$protect = false;
     	return;
     }
@@ -80,36 +80,25 @@ Class PageData {
     $page->slug = basename($page->url_path);
 
     # page.updated
-    $updated = @filemtime($page->file_path);
-    $page->updated = $updated;
-
-    // convert page 'date' to timestamp if set, or set date from filemtime;
-    if(isset($page->data['date'])){
-    	$strtotime = @strtotime($page->data['date']);
-    	if($strtotime) $page->date = $strtotime;
-    } else {
-    	$page->date = $updated;
-    }
+    $page->updated = strval(date('c', filemtime($page->file_path)));
 
     # page.children_count
-    if(!$is_file && basename($page->template_file) !== 'menu.html') $page->children_count = strval(count($page->data['children']));
+    if(!$is_file) $page->children_count = strval(count($page->data['children']));
 
     # page.domain_name
     $page->domain_name = $_SERVER['HTTP_HOST'];
 
     # page.base_url
-    if(empty(self::$base_url)) self::$base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', Helpers::script_name());
+    if(empty(self::$base_url)) self::$base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
     $page->base_url = self::$base_url;
+	  //$page->base_url = $_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['PHP_SELF']);
 
 	  # page.id
     $page->id = "p" . substr(md5($_SERVER['HTTP_HOST'] . $page->data['permalink']), 0, 6);
 
     if(!$is_file) {
 	    # x3 title
-	    $title = empty($page->data['title']) ? ucwords(preg_replace('/[-_]/', ' ', $page->data['slug'])) : strip_tags($page->data['title'], '<a><span><em><i><b><strong><small><s><mark>');
-	    $page->data['title'] = $title;
-	    $page->data['sort_title'] = $title;
-	    //$page->data['title'] = empty($page->data['title']) ? ucwords(preg_replace('/[-_]/', ' ', $page->data['slug'])) : strip_tags($page->data['title'], '<a><span><em><i><b><strong><small><s><mark>');
+	    $page->data['title'] = empty($page->data['title']) ? ucwords(preg_replace('/[-_]/', ' ', $page->data['slug'])) : strip_tags($page->data['title'], '<a><span><em><i><b><strong><small><s><mark>');
 
 	    # x3 label
 	    $page->data['label'] = empty($page->data['label']) ? ucwords(preg_replace('/[-_]/', ' ', $page->data['slug'])) : strip_tags($page->data['label']);
@@ -125,6 +114,7 @@ Class PageData {
 	    $page->current_year = date('Y');
 
 	    # X3 get page protected
+    	//$page->protected = self::get_protected(Helpers::modrewrite_parse($page->url_path));
     	if($page->is_protected){
     		$page->protected = $page->is_protected;
     	} else if($page->url_path === 'examples/features/password') {
@@ -133,11 +123,17 @@ Class PageData {
     		$page->protected = self::get_protected($page->url_path);
     	}
 
-    	# page.x3_version
-	    $page->x3_version = X3::$version;
+    	# page.stacey_version
+	    $page->stacey_version = Stacey::$version;
 
 	    # page.site_updated
-      $page->site_updated = Helpers::site_last_modified();
+	    if(!self::$site_updated) self::$site_updated = Helpers::site_last_modified();
+	    $page->site_updated = self::$site_updated;
+
+    	# page.siblings_count
+	    $page->siblings_count = strval(count($page->data['siblings_and_self']));
+
+	    # page.index
 
 	    # page.template_name
 	    $page->data['template_name'] = $page->template_name;
@@ -146,15 +142,14 @@ Class PageData {
 
     # page.cache_page
 	  $page->bypass_cache = isset($page->data['bypass_cache']) && $page->data['bypass_cache'] !== 'false' ? $page->data['bypass_cache'] : false;
+
   }
 
   static function create_collections($page, $current_page = false, $is_file = false) {
 
-  	$template_file = basename($page->template_file);
-
   	# page.root (only used for site object, xml and atom)
-  	if(self::$is_site || $template_file === 'sitemap.xml' ||  $template_file === 'feed.atom') {
-  		if(!self::$page_root) self::$page_root = Helpers::list_files(Config::$content_folder, false, true);
+  	if(self::$is_site || basename($page->template_file) === 'sitemap.xml' ||  basename($page->template_file) === 'feed.atom') {
+  		if(!self::$page_root) self::$page_root = Helpers::list_files(Config::$content_folder, '/^\d+?\./', true);
 	  	$page->root = self::$page_root;
   	}
 
@@ -164,7 +159,6 @@ Class PageData {
 	    # page.query
 	    $page->query = $_GET;
 
-	    /*
 	    # page.parent
 	    $dirname = dirname($page->file_path);
 	    $parent_path = $dirname == Config::$content_folder ? array() : array($dirname);
@@ -176,7 +170,7 @@ Class PageData {
 	    # page.siblings_and_self
 	    if(self::$current_parent !== $parent_path) {
 	    	self::$current_parent = $parent_path;
-	    	self::$current_siblings = Helpers::list_files($parent_path, false, true);
+	    	self::$current_siblings = Helpers::list_files($parent_path, '/^\d+?\./', true);
 	    }
 	    $page->siblings_and_self = self::$current_siblings;
 
@@ -186,27 +180,23 @@ Class PageData {
 		    $page->previous_sibling = array($neighboring_siblings[0]);
 		    $page->next_sibling = array($neighboring_siblings[1]);
 	  	}
-	  	*/
 	  }
 
 	  # page.children
-	  //if(!$is_file) $page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
-	  //if(!$is_file) $page->children = Helpers::list_files($page->file_path, null, true, false);
-	  if(!$is_file && $template_file !== 'menu.html') {
-	  	$page->children = Helpers::list_files($page->file_path, false, true);
-	  }
+	  if(!$is_file) $page->children = Helpers::list_files($page->file_path, '/^\d+?\./', true);
   }
 
   static function create_asset_collections($page, $current_page = false) {
 
   	// load?
-  	$load = empty($page->data['gallery']['assets']) && $page->data['gallery']['hide'] === false && strpos($page->data['layout']['items'], 'gallery') !== false && basename($page->template_file) !== 'menu.html';
+  	$load = empty($page->data['gallery']['assets']) && $page->data['gallery']['hide'] === false && strpos($page->data['layout']['items'], 'gallery') !== false;
 
     # page.images
     if($load) {
 
     	if(self::$hide === false){
-	    	$hide = X3Config::$config['settings']['hide_images'];
+    		global $x3_config;
+	    	$hide = $x3_config['settings']['hide_images'];
 	    	if($hide === 'double') {
 	    		self::$hide = '(?!__)';
 	    	} else if($hide === 'single'){
@@ -215,26 +205,34 @@ Class PageData {
 	    		self::$hide = '';
 	    	}
     	}
-
-    	// get page images
-    	$page_images = Helpers::list_files($page->file_path, '/^' . self::$hide . '(?:[^.\n]*\.)*(?<!^preview\.|^thumb\.)(?:jpe?g|png|gif|webp)$/i', false);
-
-    	// filter hidden if not current page (for images count). Current page images are filtered in twig.extensions sortby()
-    	if(!$current_page && !empty($page_images)){
-    		foreach ($page_images as $name => $path) {
-    			$name_lower = strtolower($name);
-    			if(isset($page->data[$name_lower]['hidden']) && !empty($page->data[$name_lower]['hidden'])) unset($page_images[$name]);
-    		}
-    	}
-    	$page->images = $page_images;
-
-		  # page.video
-    	if($current_page || self::$is_site) $page->video = Helpers::list_files($page->file_path, '/^' . self::$hide . '(?:[^.\n]*\.)*(?:mov|mp4|m4v|webm|ogv)$/i', false);
+    	$page->images = Helpers::list_files($page->file_path, '/^' . self::$hide . '(?:[^.\n]*\.)*(?<!^preview\.|^thumb\.)(?:jpe?g|png|gif)$/i', false);
     }
+
+    # page.video
+    if($load && ($current_page || self::$is_site)) $page->video = Helpers::list_files($page->file_path, '/^' . self::$hide . '(?:[^.\n]*\.)(?:mov|mp4|m4v)$/i', false);
+
+    # page.swf, page.html, page.doc, page.pdf, page.mp3, etc.
+    # create a variable for each file type included within the page's folder (excluding .yml files)
+    // required for mp3!
+    /*$assets = self::get_file_types($page->file_path);
+    foreach($assets as $asset_type => $asset_files) {
+      $page->$asset_type = $asset_files;
+    }*/
+  	//}
   }
 
-  //
+  # What's this?
+  /*static function preparse_text($text) {
+    $content = preg_replace_callback('/:\s*(\n)?\+{3,}([\S\s]*?)\+{3,}/', create_function('$match',
+      'return ": |\n  ".preg_replace("/\n/", "\n  ", $match[2]);'
+    ), $text);
+    return $content;
+  }*/
+
   static function create_textfile_vars($page, $content = false, $current_page = false) {
+
+  	# globals
+  	global $x3_config;
 
   	# Parent template file
     global $current_page_template_file;
@@ -248,10 +246,10 @@ Class PageData {
     if($page->template_name === 'page' && file_exists($json_file)){
     	$json_content = file_get_contents($json_file);
     	$json = (!empty($json_content)) ? json_decode($json_content, TRUE) : array();
-    	$vars = array_replace_recursive(X3Config::$config, $json);
+    	$vars = array_replace_recursive($x3_config, $json);
     } else {
     	$json = array();
-    	$vars = X3Config::$config;
+    	$vars = $x3_config;
     }
 
     # Vars merge
@@ -271,7 +269,7 @@ Class PageData {
 	    $markdown_compatible = preg_match('/\.(xml|html?|rss|rdf|atom|js|json)$/', $current_page_template_file);
 	    //$relative_path = preg_replace('/^\.\//', Helpers::relative_root_path(), $page->file_path);
 	    # x3 fix rootpath
-	    $root_path = preg_replace('/(\/+)/','/', str_replace('/index.php','',Helpers::script_name())) . str_replace('./','/',(string)$page->file_path);
+	    $root_path = preg_replace('/(\/+)/','/',str_replace('/index.php','',$_SERVER['PHP_SELF'])) . str_replace('./','/',$page->file_path);
 
 	    $vars = self::parse_vars($vars, $markdown_compatible, $root_path);
   	}
@@ -337,6 +335,7 @@ Class PageData {
         }
       }
     }
+
   }
 
 }

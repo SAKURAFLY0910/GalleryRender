@@ -1,6 +1,6 @@
 <?php
-//global $language;
-//$language = array();
+global $language;
+$language = array();
 
 // In this file you can translate the Admin Panel's terms and phrases to your own language :)
 // Please be careful and don't change the words which are inside [Brackets]
@@ -21,8 +21,6 @@ $language["Cloudflare_Flush_Success"] = "页面从Cloudflare刷新成功.";
 $language["Cloudflare_Flush_Fail"] = "从Cloudflare刷新失败.";
 $language["Menu_Expand"] = "展开";
 $language["Menu_Collapse"] = "折叠";
-$language["Hide"] = "隐藏";
-$language["Unhide"] = "不要隐藏";
 
 // Uploader
 $language["Start_Upload"] = "开始上传";

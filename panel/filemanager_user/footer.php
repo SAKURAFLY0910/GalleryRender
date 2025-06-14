@@ -12,102 +12,46 @@ if ($core->isLogin() and $core->is_block == 0 and $core->role == "user"){
 <div class="footer">
 	<div class="footer-inner">
 		<i class="fa fa-chevron-up x3-scroll-up"></i>
-		<span class="x3-version">X<?php echo X3Config::$config["x3_version"] ?></span>
+		<span class="x3-version">X<?php echo $x3_config["x3_version"] ?></span>
 	</div>
 </div>
 
-<!-- Javascript -->
-<script src="https://cdn.jsdelivr.net/npm/blueimp-tmpl@3.19.0/js/tmpl.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/keymaster@1.6.2/keymaster.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/autosize@4.0.2/dist/autosize.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/scrolltofixed@1.0.6/jquery-scrolltofixed.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-load-image@5.14.0/js/load-image.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-canvas-to-blob@3.28.0/js/canvas-to-blob.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.12.1/ui/widget.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-process.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-image.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-audio.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-video.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/js/jquery.fileupload-ui.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/underscore@1.12.0/underscore.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-noconflict/ace.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.0.1/velocity.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.0.1/velocity.ui.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-hoverintent@1.10.1/jquery.hoverIntent.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-contextmenu@1.0.0/bootstrap-contextmenu.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-growl-ifightcrime@1.1.0/jquery.bootstrap-growl.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/z-schema@5.0.0/dist/ZSchema-browser-min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-throttle-debounce@1.0.0/jquery.ba-throttle-debounce.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.59.0/lib/codemirror.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.59.0/mode/xml/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-<?php if(preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || preg_match('~Trident/7.0(; Touch)?; rv:11.0~',$_SERVER['HTTP_USER_AGENT'])): ?><script src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12.0/intersection-observer.js"></script><?php endif; ?>
-<script src="https://cdn.jsdelivr.net/npm/yall-js@3.2.0/dist/yall.min.js"></script>
+<!-- Needs to be included before other JS -->
+<script src="filemanager_js/tmpl.min.js"></script>
 
-<?php
-$summernote_lang = false;
-$language_array = array(
-	'German'=>'de-DE',
-	'French'=>'fr-FR',
-	'Polish'=>'pl-PL',
-	'Chinese'=>'zh-CN',
-	'ar'=>'ar-AR',
-	'bg'=>'bg-BG',
-	'ca'=>'ca-ES',
-	'cs'=>'cs-CZ',
-	'da'=>'da-DK',
-	'de'=>'de-DE',
-	'el'=>'el-GR',
-	'es'=>'es-ES',
-	'fi'=>'fi-FI',
-	'fr'=>'fr-FR',
-	'he'=>'he-IL',
-	'hr'=>'hr-HR',
-	'hu'=>'hu-HU',
-	'id'=>'id-ID',
-	'it'=>'it-IT',
-	'ja'=>'ja-JP',
-	'ko'=>'ko-KR',
-	'nb'=>'nb-NO',
-	'nn'=>'nb-NO',
-	'no'=>'nb-NO',
-	'nl'=>'nl-NL',
-	'pl'=>'pl-PL',
-	'pt'=>'pt-PT',
-	'ro'=>'ro-RO',
-	'ru'=>'ru-RU',
-	'sv'=>'sv-SE',
-	'th'=>'th-TH',
-	'tr'=>'tr-TR',
-	'uk'=>'uk-UA',
-	'vi'=>'vi-VN',
-	'zh'=>'zh-CN'
-);
-$language_key = $lng === 'English' ? substr(strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) : $lng;
-if(array_key_exists($language_key, $language_array)) {
-	$summernote_lang = $language_array[$language_key];
-	echo '<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/lang/summernote-' . $summernote_lang . '.js"></script>';
-}
-?>
-
-<!-- non-critical CSS -->
-<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/css/jquery.fileupload.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/blueimp-file-upload@10.31.0/css/jquery.fileupload-ui.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.bootstrap3.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.css" rel="stylesheet" />
+<!-- various JS -->
+<script src='https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min.js'></script>
+<script src="https://cdn.jsdelivr.net/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/keymaster.js/1.6.1/keymaster.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.autosize/3.0.4/autosize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.scrolltofixed/0.1/jquery-scrolltofixed-min.js"></script>
+<script src="https://cdn.jsdelivr.net/load-image/1.11.1/js/load-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/canvas-toblob/0.1/canvas-toBlob.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/vendor/jquery.ui.widget.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-process.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-image.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-audio.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-video.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-validate.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.fileupload/9.9.0/js/jquery.fileupload-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/simplemde/1.8.0/simplemde.min.js"></script>
+<script src="https://cdn.jsdelivr.net/underscorejs/1.8.3/underscore-min.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/mode-css.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/mode-javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/mode-html.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/mode-json.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/worker-css.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/worker-javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/worker-html.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/worker-json.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.0/min/theme-tomorrow_night.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.velocity/0.11.9/jquery.velocity.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.velocity/0.11.9/velocity.ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/photoswipe/4.1.2/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/photoswipe/4.1.2/photoswipe-ui-default.min.js"></script>
+<script src="https://cdn.jsdelivr.net/sortable/1.4.2/Sortable.min.js"></script>
 
 <!-- X3 vars -->
 <?php
@@ -127,31 +71,23 @@ var cloudflare = <?php if(defined('CLOUDFLARE_ENABLED') && CLOUDFLARE_ENABLED &&
 var custom_setting_templates = <?php echo (file_exists('../config/custom-setting-templates.json') && is_readable('../config/custom-setting-templates.json') ? 'true' : 'false') ?>;
 var user = 'user';
 var hide_auth = <?php if(defined('HIDE_AUTH') && HIDE_AUTH) { echo 'true'; } else { echo 'false'; } ?>;
-var x3_version = '<?php echo X3Config::$config["x3_version"] ?>';
-var x3_panel_version = '<?php echo X3Config::$config["x3_panel_version"] ?>';
+var x3_version = '<?php echo $x3_config["x3_version"] ?>';
+var x3_panel_version = '<?php echo $x3_config["x3_panel_version"] ?>';
 var server_software = '<?php echo $server_software ?>';
 var conf_editor = <?php echo $conf_editor; ?>;
 var core_user_id = <?php echo $core->user_id; ?>;
 var core_user_dir = '<?php echo $core->user_dir; ?>';
 var session_maxlifetime = <?php echo !empty($session_maxlifetime) ? $session_maxlifetime : 'false'; ?>;
-var summernote_lang = <?php echo $summernote_lang ? "'" . $summernote_lang . "'" : 'false'; ?>;
-var userx = '<?php echo X3Config::$config["userx"] ?>';
-var is_guest = false;
-
-// get folders
-var folders = <?php echo X3::get_folders(false); ?>;
-
 reload_sidebar = false;
 first_flag = true;
 here = '';
 
 // language object
 var language = <?php echo json_encode($language); ?>;
-var selected_lang = '<?php echo $lng; ?>';
 </script>
 
 <!-- X3 Panel versioned -->
-<script src="filemanager_js/x3_panel.js?v=<?php echo X3Config::$config["x3_panel_version"]; ?>"></script>
+<script src="filemanager_js/x3_panel.js?v=<?php echo $x3_config["x3_panel_version"]; ?>"></script>
 
 <!-- init -->
 <script>

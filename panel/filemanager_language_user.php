@@ -1,6 +1,5 @@
 <?php
-//global $language;
-$language = array();
+global $language;
 
 // In this file you can translate the User Panel's terms and phrases of Lift File Manager to your own language :)
 // Please be carful and don't change the words which are inside [Brackets]

@@ -12,21 +12,31 @@ $denied = '<strong>Permission denied</strong><br>You need to <a href=./>login</a
 
 // ajax
 if($core->isLogin()){
+	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' && isset($_POST['touch'])) {
 
-	// exit if guest
-	if($core->is_guest()) exit('Guest user cannot make changes.');
+		header('Content-Type: application/json');
+		if(touch($file)) {
+			echo '{ "success": true }';
+		} else {
+			echo '{ "error": "' . $error . '" }';
+		}
 
-	if(touch($file)) {
-
-		# echo success
-		echo $success;
-		flush();
-
-		// refresh folders.json
-		X3::refresh_folders();
-
+	// direct access
 	} else {
-		echo $error;
+		if(touch($file)) {
+
+			# echo success
+			echo $success;
+			flush();
+
+			# build data file
+			chdir('../');
+			include './app/data.inc.php';
+			Data::make();
+
+		} else {
+			echo $error;
+		}
 	}
 } else {
 	echo $denied;

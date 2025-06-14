@@ -14,7 +14,7 @@ class INSTALL extends Services_JSON
 	public function _install($firstname,$lastname,$username,$email,$password)
 	{
 		$table_query = "CREATE TABLE IF NOT EXISTS filemanager_db(
-				  id INT NOT NULL AUTO_INCREMENT,
+				  id INT NOT NULL AUTO_INCREMENT, 
 				  PRIMARY KEY(id),
 				  firstname TEXT,
 				  lastname TEXT,
@@ -59,14 +59,14 @@ class INSTALL extends Services_JSON
                     if(mysqli_query($GLOBALS["___mysqli_ston"], $table_query))
                     {
                         $name = "allow_extensions";
-                        $content = array('rar','zip','txt','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp4','gpx','webp');
+                        $content = array('rar','zip','txt','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp4');
                         $content = $this->_encode($content);
                         $insert_options = "INSERT INTO filemanager_options (option_name, option_content) VALUES ('$name' , '$content')";
                         if(mysqli_query($GLOBALS["___mysqli_ston"], $insert_options))
                         {
 
                             $name = "allow_uploads";
-                            $content =  array("gif", "jpeg", "jpg", "png", "txt", "zip", "rar", "psd", "flv", "mp4",'gpx','webp');
+                            $content =  array("gif", "jpeg", "jpg", "png", "txt", "zip", "rar", "psd", "flv");
                             $content = $this->_encode($content);
                             $insert_options = "INSERT INTO filemanager_options (option_name, option_content) VALUES ('$name' , '$content')";
                             if(mysqli_query($GLOBALS["___mysqli_ston"], $insert_options))
@@ -84,30 +84,27 @@ class INSTALL extends Services_JSON
 				                        $subject = "X3 Panel installed.";
                                 $message = "<strong>username:</strong> ".$username."<br><strong>password:</strong> ".$email_poasword."<br><br>".$link;
 
-                                // initiate X3 PHPMailer router
-												        require '../../app/x3.mail.inc.php';
-												        $use_smtp = defined('IS_SMTP_USE') && IS_SMTP_USE ? true : false;
-												        $phpMailer = x3_mail($use_smtp);
+													      require_once '../../app/extensions/PHPMailer/PHPMailerAutoload.php';
+													      $phpMailer = new PHPMailer();
+													      if(defined("IS_SMTP_USE")){
+													        if(IS_SMTP_USE){
+													        	$phpMailer->isSMTP();
+													          $phpMailer->SMTPAuth = SMTPAuth;
+													          $phpMailer->SMTPSecure = SMTPSecure;
+													          $phpMailer->Host = SMTPHost;
+													          $phpMailer->Port = SMTPPort;
+													          $phpMailer->Username = SMTPUsername;
+													          $phpMailer->Password = SMTPPassword;
+													        }
+													      }
+													      $phpMailer->CharSet = 'UTF-8';
+													      $from = constant(SMTPFrom);
+      													if(!empty($from)) $phpMailer->setFrom($from);
+													      $phpMailer->addAddress($email);
+													      $phpMailer->Subject = $subject;
+													      $phpMailer->IsHTML(true);
+													      $phpMailer->Body = $message;
 
-												        // smtp
-												        if($use_smtp){
-												            $phpMailer->isSMTP();
-												            $phpMailer->SMTPAuth = SMTPAuth;
-												            $phpMailer->SMTPSecure = SMTPSecure;
-												            $phpMailer->Host = SMTPHost;
-												            $phpMailer->Port = SMTPPort;
-												            $phpMailer->Username = SMTPUsername;
-												            $phpMailer->Password = SMTPPassword;
-												        }
-
-												        // phpmailer
-												        $phpMailer->CharSet = 'UTF-8';
-												        $from = constant('SMTPFrom');
-												        if(!empty($from)) $phpMailer->setFrom($from);
-												        $phpMailer->addAddress($email);
-												        $phpMailer->Subject = $subject;
-												        $phpMailer->IsHTML(true);
-												        $phpMailer->Body = $message;
 				                        if($phpMailer->send()){
 				                            echo '<div class="alert alert-success"><center>';
                                     echo "X3 panel has been installed and an email has been sent.<br><a href='".$link."'>Login</a>";
@@ -169,12 +166,11 @@ class INSTALL extends Services_JSON
 <meta name="robots" content="noindex">
 <meta name="googlebot" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link href="../filemanager_css/x3.panel.min.css?v=<?php echo X3Config::$config["x3_panel_version"]; ?>" rel="stylesheet" />
+<link href='https://cdn.jsdelivr.net/bootstrap/3.0.0/css/bootstrap.min.css' rel='stylesheet' />
+<link href="../filemanager_css/x3.panel.css?v=<?php echo $x3_config["x3_panel_version"]; ?>" rel="stylesheet" />
 </head>
 <body>
-<?php
-
+<?php 
 if(isset($_POST["install"]) && $_POST["nickname"] == "googooforgaga" && $_POST["pass"] == "")
 {
 	$firstname = urlencode($_POST["firstname"]);

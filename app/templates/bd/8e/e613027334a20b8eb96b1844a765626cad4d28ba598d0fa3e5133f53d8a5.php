@@ -17,7 +17,7 @@ class __TwigTemplate_bd8ee613027334a20b8eb96b1844a765626cad4d28ba598d0fa3e5133f5
     {
         // line 1
         echo "
-<header class=\"header\">
+<header class=header>
 
 \t\t";
         // line 5
@@ -33,16 +33,16 @@ class __TwigTemplate_bd8ee613027334a20b8eb96b1844a765626cad4d28ba598d0fa3e5133f5
         echo "\t\t\t";
         if ($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "style"), "logo"), "use_image")) {
             // line 10
-            echo "\t\t\t\t<img src=\"";
+            echo "\t\t\t\t<img src='";
             echo ((isset($context["assetspath"]) ? $context["assetspath"] : null) . call_user_func_array($this->env->getFunction('firstImage')->getCallable(), array("./content/custom/logo")));
-            echo "\" alt=\"";
+            echo "' alt='";
             echo (isset($context["logo_title"]) ? $context["logo_title"] : null);
-            echo "\" />
+            echo "' />
 \t\t\t";
         } else {
             // line 12
             echo "\t\t\t\t";
-            echo call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, (isset($context["logo_title"]) ? $context["logo_title"] : null)));
+            echo call_user_func_array($this->env->getFilter('trim')->getCallable(), array((isset($context["logo_title"]) ? $context["logo_title"] : null)));
             echo "
 \t  \t";
         }
@@ -54,45 +54,47 @@ class __TwigTemplate_bd8ee613027334a20b8eb96b1844a765626cad4d28ba598d0fa3e5133f5
   \t";
         // line 17
         echo "  \t";
+        // line 18
+        echo "  \t";
         if ($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "style"), "logo"), "use_image")) {
             $context["logo_classes"] = " logo-image";
         }
-        // line 18
+        // line 19
         echo "
 \t\t";
-        // line 20
-        echo "\t\t<div class=\"nav-wrapper\">
-\t\t\t<nav class=\"nav\">
-\t\t\t\t<div class=\"logo-wrapper\">
+        // line 21
+        echo "\t\t<div class=nav-wrapper>
+\t\t\t<nav class=nav>
+\t\t\t\t<div>
 \t\t\t\t";
-        // line 23
+        // line 24
         if ($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "style"), "logo"), "enabled")) {
-            // line 24
+            // line 25
             echo "\t\t\t\t\t";
             $context["logo_link"] = ((call_user_func_array($this->env->getTest('empty')->getCallable(), array($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "style"), "logo"), "link")))) ? (((isset($context["rootpath"]) ? $context["rootpath"] : null) . "/")) : ($this->getAttribute($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "style"), "logo"), "link")));
-            // line 25
+            // line 26
             echo "\t\t\t\t\t<a href=\"";
             echo (isset($context["logo_link"]) ? $context["logo_link"] : null);
-            echo "\" class=\"logo ";
+            echo "\" class='logo ";
             echo (isset($context["logo_classes"]) ? $context["logo_classes"] : null);
-            echo "\">";
-            echo call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, (isset($context["logo_content"]) ? $context["logo_content"] : null)));
+            echo "'>";
+            echo call_user_func_array($this->env->getFilter('trim')->getCallable(), array((isset($context["logo_content"]) ? $context["logo_content"] : null)));
             echo "</a>
 \t\t\t\t";
         }
-        // line 27
+        // line 28
         echo "\t\t\t\t</div>
-\t\t\t\t<ul class=\"menu slim\">
+\t\t\t\t<ul class='menu slim'>
 \t\t\t\t\t";
-        // line 29
+        // line 30
         if ((!$this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "settings"), "menu_disabled"))) {
-            // line 30
+            // line 31
             echo "\t\t\t\t\t\t";
             echo call_user_func_array($this->env->getFunction('getMenu')->getCallable(), array());
             echo "
 \t\t\t\t\t";
         }
-        // line 32
+        // line 33
         echo "\t\t\t\t</ul>
 \t\t\t</nav>
 \t\t</div>
@@ -112,6 +114,6 @@ class __TwigTemplate_bd8ee613027334a20b8eb96b1844a765626cad4d28ba598d0fa3e5133f5
 
     public function getDebugInfo()
     {
-        return array (  90 => 30,  74 => 25,  71 => 24,  69 => 23,  61 => 18,  56 => 17,  44 => 12,  36 => 10,  27 => 6,  383 => 145,  380 => 144,  369 => 138,  366 => 136,  364 => 135,  360 => 134,  356 => 133,  354 => 132,  348 => 128,  345 => 126,  340 => 125,  337 => 124,  334 => 122,  328 => 120,  325 => 119,  322 => 117,  316 => 115,  313 => 114,  310 => 112,  304 => 110,  301 => 109,  297 => 106,  291 => 103,  288 => 101,  283 => 99,  280 => 98,  278 => 97,  275 => 96,  272 => 94,  270 => 91,  258 => 88,  255 => 86,  247 => 81,  243 => 80,  230 => 69,  227 => 68,  224 => 66,  218 => 64,  215 => 63,  212 => 61,  205 => 59,  202 => 58,  199 => 57,  196 => 55,  182 => 53,  175 => 52,  172 => 51,  166 => 48,  163 => 46,  156 => 45,  150 => 44,  129 => 39,  126 => 37,  109 => 33,  92 => 29,  88 => 29,  85 => 27,  63 => 21,  53 => 15,  47 => 16,  32 => 8,  26 => 4,  24 => 5,  22 => 2,  189 => 54,  186 => 80,  183 => 79,  181 => 78,  178 => 76,  174 => 74,  171 => 73,  168 => 72,  164 => 69,  160 => 66,  157 => 65,  154 => 64,  151 => 63,  148 => 62,  146 => 43,  143 => 60,  140 => 41,  134 => 40,  131 => 55,  128 => 53,  125 => 52,  122 => 50,  119 => 36,  116 => 34,  111 => 47,  108 => 46,  105 => 45,  102 => 32,  99 => 30,  96 => 32,  94 => 39,  91 => 37,  89 => 36,  87 => 35,  84 => 27,  80 => 24,  77 => 23,  73 => 28,  70 => 22,  68 => 26,  66 => 25,  64 => 20,  62 => 23,  59 => 21,  57 => 20,  54 => 18,  50 => 14,  46 => 16,  43 => 14,  41 => 13,  39 => 12,  37 => 11,  35 => 10,  33 => 9,  30 => 8,  28 => 6,  25 => 4,  23 => 3,  19 => 1,);
+        return array (  86 => 28,  76 => 26,  73 => 25,  66 => 21,  63 => 19,  58 => 18,  56 => 17,  53 => 15,  44 => 12,  36 => 10,  27 => 6,  315 => 115,  312 => 114,  302 => 108,  299 => 107,  297 => 106,  293 => 105,  289 => 104,  287 => 103,  281 => 99,  278 => 97,  273 => 96,  270 => 95,  267 => 93,  261 => 91,  258 => 90,  255 => 88,  249 => 86,  246 => 85,  242 => 82,  236 => 79,  233 => 77,  227 => 75,  224 => 74,  193 => 64,  189 => 63,  176 => 52,  173 => 51,  170 => 49,  164 => 47,  161 => 46,  158 => 44,  148 => 41,  132 => 36,  126 => 35,  122 => 34,  105 => 30,  102 => 28,  61 => 19,  45 => 12,  22 => 2,  92 => 31,  89 => 36,  85 => 24,  81 => 31,  78 => 23,  74 => 27,  71 => 24,  67 => 23,  55 => 17,  52 => 16,  49 => 14,  40 => 11,  34 => 9,  31 => 8,  29 => 7,  26 => 4,  24 => 5,  21 => 2,  223 => 85,  220 => 83,  217 => 82,  215 => 81,  212 => 79,  208 => 71,  205 => 69,  202 => 75,  198 => 72,  195 => 70,  181 => 69,  177 => 67,  174 => 66,  171 => 65,  168 => 64,  165 => 63,  162 => 62,  159 => 61,  157 => 60,  154 => 59,  151 => 42,  145 => 40,  142 => 54,  139 => 37,  137 => 51,  134 => 50,  116 => 32,  113 => 47,  110 => 31,  107 => 45,  104 => 44,  101 => 43,  98 => 33,  95 => 27,  90 => 30,  87 => 38,  84 => 36,  82 => 35,  79 => 33,  77 => 32,  75 => 31,  72 => 29,  68 => 20,  64 => 22,  62 => 21,  59 => 19,  57 => 18,  54 => 17,  50 => 14,  46 => 13,  43 => 12,  41 => 14,  39 => 10,  37 => 9,  35 => 11,  33 => 9,  30 => 8,  28 => 7,  25 => 4,  23 => 3,  19 => 1,);
     }
 }

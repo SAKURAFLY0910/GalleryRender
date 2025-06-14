@@ -73,7 +73,6 @@ if ($core->isLogin())
                     if($core->check_base_root($newName))
                     {
                         $core->copy_directory($oldName, $newName);
-                        X3::update_folders_key($oldName, $newName, true);
                         echo 'true';
                     }
                     else
@@ -87,7 +86,6 @@ if ($core->isLogin())
                     {
                         if($core->rename_directory($oldName, $newName))
                         {
-                        		X3::update_folders_key($oldName, $newName);
                             echo 'true';
                         }
                         else
@@ -117,7 +115,6 @@ if ($core->isLogin())
                 {
                     if($core->recursiveDelete($name))
                     {
-                    		X3::remove_folders_key($name);
                         echo 'true';
                     }
                     else
@@ -328,7 +325,6 @@ if ($core->isLogin())
                 $flag = true;
                 $errors = array();
                 $dir = $core->name_filter( $dir );
-                $dirs = array();
                 if($core->check_base_root($dir))
                 {
                     foreach ($files_and_folders as $value)
@@ -339,8 +335,6 @@ if ($core->isLogin())
                             {
                                 $flag = false;
                                 $errors[] = $value;
-                            } else {
-                            	$dirs[] = $dir.$value;
                             }
                         }
 
@@ -353,8 +347,6 @@ if ($core->isLogin())
                             }
                         }
                     }
-
-                    if(count($dirs)) X3::remove_folders_key($dirs);
 
                     if($flag)
                         echo 'true';
@@ -383,8 +375,6 @@ if ($core->isLogin())
             $errors = array();
             $newName = $core->name_filter($newName);
             $dir = $core->name_filter( $dir );
-            $dirs_old = array();
-            $dirs_new = array();
             if($core->check_base_root($newName))
             {
                 foreach ($files_and_folders as $value)
@@ -395,9 +385,6 @@ if ($core->isLogin())
                         {
                             $flag = false;
                             $errors[] = $value;
-                        } else {
-                        	$dirs_old[] = $dir.$value;
-                        	$dirs_new[] = realpath($newName.$value);
                         }
                     }
 
@@ -410,10 +397,6 @@ if ($core->isLogin())
                         }
                     }
                 }
-
-                // folders.json
-                if(count($dirs_old)) X3::update_folders_key($dirs_old, $dirs_new);
-
                 if($flag)
                 {
                     echo 'true';
@@ -440,8 +423,6 @@ if ($core->isLogin())
             $errors = array();
             $newName = $core->name_filter($newName);
             $dir = $core->name_filter( $dir );
-            $dirs_old = array();
-            $dirs_new = array();
             if($core->check_base_root($newName))
             {
                 foreach ($files_and_folders as $value)
@@ -449,8 +430,6 @@ if ($core->isLogin())
                     if(is_dir($dir.$value))
                     {
                         $core->copy_directory($dir.$value, $newName.$value);
-                        $dirs_old[] = $dir.$value;
-                        $dirs_new[] = realpath($newName.$value);
                     }
 
                     if(is_file($dir.$value))
@@ -462,10 +441,6 @@ if ($core->isLogin())
                         }
                     }
                 }
-
-                // folders.json
-                if(count($dirs_old)) X3::update_folders_key($dirs_old, $dirs_new, true);
-
                 if($flag)
                 {
                     echo 'true';
@@ -478,6 +453,136 @@ if ($core->isLogin())
             else
             {
                 language_filter("Can_not_copy_files_folders");
+            }
+        }
+
+        if(isset($_POST["download_selected"]))
+        {
+            $dir = $_POST["this_path"];
+            if($dir != "../".ROOT_DIR_NAME."/")
+                $dir .= "/";
+            $zip_name = date("YmdHis");
+            $realName = $zip_name;
+            $temp_dir = "../".ROOT_DIR_NAME."/";
+            $dir = $core->name_filter($dir);
+            if(is_file($temp_dir.$zip_name.".zip"))
+            {
+                $zip_name = $zip_name."_".rand();
+            }
+
+            $zip_name = $temp_dir.$zip_name;
+            $zip_name = $core->name_filter( $zip_name );
+            $files_folders = $_POST["download_selected"];
+            if($core->check_base_root($dir))
+            {
+                if(mkdir($zip_name, 0755))
+                {
+                    foreach ($files_folders as $value)
+                    {
+                        if(is_dir($dir.$value))
+                        {
+                            $core->copy_directory($dir.$value, $zip_name."/".$value);
+                        }
+                        else
+                        {
+                            copy($dir.$value, $zip_name."/".$value);
+                        }
+                    }
+                    if($core->create_zip($zip_name, $zip_name))
+                    {
+                        $core->recursiveDelete($zip_name);
+                        $file = $zip_name.".zip";
+                        $file = $core->name_filter($file);
+                        echo "download.php?filename=".base64_encode(utf8_encode($file))."&dir=".base64_encode(utf8_encode($dir));
+                        exit;
+                    }
+                    else
+                    {
+                        $core->recursiveDelete($zip_name);
+                        echo "false";
+                    }
+                }
+                else
+                {
+                    echo "false";
+                }
+            }
+            else
+            {
+                echo 'false';
+            }
+        }
+
+        if(isset($_POST["share_selected"]))
+        {
+            $settings = $core->get_option("settings");
+            if($settings->share == "on")
+            {
+                $dir = $_POST["this_path"];
+                if($dir != "../")
+                    $dir .= "/";
+                $zip_name = date("YmdHis");
+                $realName = $zip_name;
+
+                $temp_dir = "../";
+
+                if(is_file($temp_dir.$zip_name.".zip"))
+                {
+                    $zip_name = $zip_name."_".rand();
+                }
+
+                $zip_name = $temp_dir.$zip_name;
+                $zip_name = $core->name_filter( $zip_name );
+                $dir = $core->name_filter( $dir );
+                $files_folders = $_POST["share_selected"];
+                if($core->check_base_root($dir))
+                {
+                    $send_to = $_POST["send_to"];
+                    $from = $_POST["from"];
+                    $subject = $_POST["subject"];
+                    $message = $_POST["message"];
+                    $emails = $_POST["emails"];
+                    if(mkdir($zip_name, 0755))
+                    {
+                        foreach ($files_folders as $value)
+                        {
+                            if(is_dir($dir.$value))
+                            {
+                                $core->copy_directory($dir.$value, $zip_name."/".$value);
+                            }
+                            else
+                            {
+                                copy($dir.$value, $zip_name."/".$value);
+                            }
+                        }
+                        if($core->create_zip($zip_name, $zip_name))
+                        {
+                            $core->recursiveDelete($zip_name);
+                            $file = $zip_name.".zip";
+                            $core->share_files($send_to, $emails, $subject, $from, $message, $file);
+                            sleep(1);
+                            @unlink($file);
+                            exit;
+                        }
+                        else
+                        {
+                            $core->recursiveDelete($zip_name);
+                            echo "false";
+                        }
+                    }
+                    else
+                    {
+                        echo "false";
+                    }
+                }
+                else
+                {
+                    echo "false";
+                }
+            }
+            else
+            {
+                echo "false";
             }
         }
 

@@ -8,90 +8,22 @@ if(!isset($core)){
 	$core = new filemanager_core();
 }
 
-if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-
-	// JSON output
-	header('Content-Type: application/json; charset=utf-8');
-
-	// exit if guest
-	if(!isset($_POST['get_settings']) && $core->is_guest()) exit('{ "error": "Guest user cannot make changes." }');
+if ($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
 
 	// Vars
 	$config_folder = '../config';
 	$config_user = '../config/config.user.json';
 	$config_default = '../app/config.defaults.json';
 
-	// set iptc value only if $file[val] isset and assigned value is not same as existing value.
-	function x3_set_iptc($file, $iptc, $str, $const){
-		if(isset($file[$str]) && $iptc->fetch($const) != $file[$str]) {
-			$iptc->set($const, $file[$str]);
-			return 1;
-		}
-		return 0;
-	}
-
-	// set iptc
-	function set_iptc($files){
-
-		// PHP 7.3 bug https://bugs.php.net/bug.php?id=77546
-		//if(version_compare(PHP_VERSION, '7.3') >= 0 && version_compare(PHP_VERSION, '7.3.3') < 0) return;
-
-		// filter jpg type files and path is defined
-		$files = array_filter($files, function($val){
-			return isset($val['path']) && in_array(strtolower(pathinfo($val['path'], PATHINFO_EXTENSION)), array('jpg', 'jpeg', 'pjpeg'));
-		});
-
-		// return if $files is empty
-		if(empty($files)) return;
-
-		// require IPTC
-		require 'iptc.php';
-
-		// vars
-		$success = 0;
-		$write = 0;
-
-		// loop files
-		foreach($files as $file) {
-
-			$path = $file['path'];
-
-			// continue if !file_exists or !is_writable
-			if(!file_exists($path) || !is_writable($path)) continue;
-
-			// start iptc
-			$iptc = new Iptc($path);
-
-			// write various values
-			$write += x3_set_iptc($file, $iptc, 'hidden', Iptc::X3_HIDDEN);
-			$write += x3_set_iptc($file, $iptc, 'title', Iptc::OBJECT_NAME);
-			$write += x3_set_iptc($file, $iptc, 'description', Iptc::CAPTION);
-			$write += x3_set_iptc($file, $iptc, 'link', Iptc::X3_LINK);
-			$write += x3_set_iptc($file, $iptc, 'target', Iptc::X3_LINK_TARGET);
-			$write += x3_set_iptc($file, $iptc, 'params', Iptc::X3_PARAMS);
-			$write += x3_set_iptc($file, $iptc, 'index', Iptc::X3_INDEX);
-
-			// store reference date // outdated
-			/*$reference_date = $iptc->fetch(Iptc::REFERENCE_DATE);
-			if(empty($reference_date) && isset($file['date']) && !empty($file['date'])){
-				$reference_date = $file['date'];
-				$iptc->set(Iptc::REFERENCE_DATE, $reference_date);
-			}*/
-
-			// write
-			if(!$write || $iptc->write()) $success ++;
-		}
-
-		return $success;
-	}
+	// JSON output
+	header('Content-Type: application/json; charset=utf-8');
 
 	// Function to filter differences in defaults vs save
 	function arrayRecursiveDiff($aArray1, $aArray2) {
 	  $aReturn = array();
 	  foreach ($aArray1 as $mKey => $mValue) {
 	    if (array_key_exists($mKey, $aArray2)) {
-				// if (is_array($mValue)) {
-				if (is_array($mValue) && !isset($mValue[0])) { // make sure item isn't single-dimensional array crop: [3, 2]
+	      if (is_array($mValue)) {
 	        $aRecursiveDiff = arrayRecursiveDiff($mValue, $aArray2[$mKey]);
 	        if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
 	      } else {
@@ -109,20 +41,19 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 	// Return current settings
 	if(isset($_POST['get_settings'])) {
 
+		// echo json_encode($x3_config);
+
 		// Clone settings
-		$clone = new ArrayObject(X3Config::$config);
+		$clone = new ArrayObject($x3_config);
 
-		// exclude sensitive data (optional USERX server enironment)
-		if(X3Config::$config["userx"]){
-			if(@file_exists('../../../panel_settings_exclude.php')){
-				require('../../../panel_settings_exclude.php');
-			} else if(@file_exists('../../panel_settings_exclude.php')){
-				require('../../panel_settings_exclude.php');
-			}
+		// get basedir
+		$basedir_str = ini_get('open_basedir');
+
+		// exclude sensitive data
+		$exclude_path = '../../panel_settings_exclude.php';
+		if(file_exists($exclude_path) && empty($basedir_str)) {
+			require_once($exclude_path);
 		}
-
-		// remove password (encrypted or not)
-		if(isset($clone['back']['panel']['password'])) unset($clone['back']['panel']['password']);
 
 		// echo
 		echo json_encode($clone);
@@ -133,18 +64,9 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 		if(!$core->touchme()){
 			echo $core->touchme_error();
 		} else {
-
-			// save iptc to jpg
-			if(isset($_POST['files']) && !empty($_POST['files']) && is_array($_POST['files'])){
-				set_iptc($_POST['files']);
-			}
-
-			// folders custom sorting
-			if(isset($_POST['folders']) && !empty($_POST['folders'])) X3::merge_folders(X3::json_decode($_POST['folders']));
-
-			// vars
+			// Vars
 			$save_path = str_replace('../../content','../content', $_POST['path']);
-			$page = X3::json_decode($_POST['page_settings']);
+			$page = get_magic_quotes_gpc() ? json_decode(stripslashes($_POST['page_settings']), TRUE) : json_decode($_POST['page_settings'], TRUE);
 
 			// If inject setting
 			if(isset($_POST['inject']) && $_POST['inject']) {
@@ -157,13 +79,9 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 
 			// Page settings
 			} else {
-				$diff = arrayRecursiveDiff($page, X3Config::$config);
+				$diff = arrayRecursiveDiff($page, $x3_config);
 			}
 
-			// Don't save image data in page.json
-			// foreach ($diff as $key => $val) if(preg_match('/\.jpe?g$/i', $key)) unset($diff[$key]);
-
-			// save
 			$save = (phpversion() < 5.4) ? json_encode($diff) : json_encode($diff, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
 			// Save it!
@@ -182,7 +100,6 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 					echo '{ "error": "Can\'t create ' . $save_path . '" }';
 				}
 			} else if(file_put_contents($save_path, $save)){
-				@touch(dirname($save_path));
 				echo '{ "success": true }';
 			} else {
 				echo '{ "error": "Can\'t save to file ' . $save_path . '." }';
@@ -197,24 +114,8 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 
 			// Save user config (only differences from default)
 			$default = json_decode(file_get_contents($config_default), TRUE);
-			$user = X3::json_decode($_POST['settings']);
-
-			// encrypt password, if set, php >= 5.5 && pass != admin
-			$new_pass = isset($user['back']['panel']['password']) ? $user['back']['panel']['password'] : false;
-
-			// new pass is set, encrypt
-			if(!empty($new_pass)){
-				if(phpversion() >= 5.5 && $new_pass !== 'admin') $user['back']['panel']['password'] = password_hash($new_pass, PASSWORD_DEFAULT);
-
-			// retain old pass
-			} else {
-				$user['back']['panel']['password'] = X3Config::$config['back']['panel']['password'];
-			}
-
-			// store diff only
+			$user = get_magic_quotes_gpc() ? json_decode(stripslashes($_POST['settings']), TRUE) : json_decode($_POST['settings'], TRUE);
 			$diff = (object)arrayRecursiveDiff($user, $default);
-
-			if(isset($diff->toolbar['items'])) $diff->toolbar['items'] = preg_replace(array('/,\r\n    }/', '/,\r\n  ]/'), array("\r\n    }", "\r\n  ]"), $diff->toolbar['items']); // minify and fix oprhan commas for toolbar items string
 			$save = (phpversion() < 5.4) ? json_encode($diff) : json_encode($diff, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
 			// Write data
@@ -250,43 +151,6 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 			}
 		}
 
-	// Save settings
-	} else if(isset($_POST['iptc'])) {
-
-		if(isset($_POST['files']) && !empty($_POST['files']) && is_array($_POST['files'])){
-
-			if(set_iptc($_POST['files'])){
-
-				// touch
-				if(!$core->touchme()){
-					echo $core->touchme_error();
-
-				// success
-				} else {
-					echo '{ "success": true }';
-				}
-
-			} else {
-				echo '{ "success": false, "error": "Can\'t write IPTC data to file. " }';
-			}
-
-		// empty $_POST['file'] or don't exist
-		} else {
-			echo '{ "success": false, "error": "empty files array" }';
-		}
-
-	// Save settings
-	} else if(isset($_POST['folders'])) {
-
-		// get json custom array
-		$json = X3::json_decode($_POST['folders']);
-
-		// write
-		if(!$core->touchme()){
-			echo $core->touchme_error();
-		} else {
-			echo X3::merge_folders($json) ? '{ "success": true }' : '{ "success": false, "error": "Could not write to content/folders.json" }';
-		}
 
 
 
@@ -339,3 +203,4 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
   	echo '{ "error": "No request parameters?" }';
 	}
 }
+

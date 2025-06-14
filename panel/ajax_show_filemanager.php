@@ -51,11 +51,11 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                 $have_action = $_POST["have_action"];
                 $_folder_name = explode( "/", $path );
                 $folder_name = end( $_folder_name );
-                $page_id = str_replace(array('"', '/', '.', '..'), '_', str_replace('../', '', $path));
+                $page_id = str_replace("/", "_", str_replace(".", "_", str_replace("../", "", $path)));
     ?>
 
-                <div class="x3-manager" id="page_<?php if($search != "") { echo 'search'; } else { echo $page_id; } ?>">
-                    <div>
+                <div class="row x3-manager" id="page_<?php if($search != "") { echo 'search'; } else { echo $page_id; } ?>">
+                    <div class="col-md-12">
                         <ol class="breadcrumb">
                         <?php
                         $exp = explode("/", $path);
@@ -103,7 +103,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                     }
                                     else
                                     {
-                                        echo '<li><a href="#" data-link="' . htmlspecialchars($back_link). '" onclick="loading_from_file = false; showFileManager(this.getAttribute(\'data-link\'))">'.$exp[$j].'</a></li>';
+                                        echo '<li><a href="javascript:;" onclick="loading_from_file = false; showFileManager(\''.$back_link.'\')">'.$exp[$j].'</a></li>';
                                     }
                                 }
 
@@ -118,7 +118,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
 
                        <div class="manage_box_show">
                            <div class="col-md-3">
-                           <div id="menu-container">
+                           <div id=menu-container>
                                <h3><?php language_filter( "Folder_Menu" );?></h3>
                                <hr />
                                <div id="show_left_sidebar_box">
@@ -130,18 +130,18 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                            </div>
 
                             <div class="col-md-9">
-                            		<h3 class="page-title"><?php echo $folder_title;?></h3>
-                                <a class="title-url" href="#" target="_blank"><span></span><span class="glyphicon glyphicon-new-window"></span></a>
                                 <div class="current-folder-btns" <?php if( $search != "" ){ ?> style="display: none" <?php }?>>
                                     <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>data-action="rename_dir"<?php }?>><?php language_filter("Rename");?></button>
-                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>data-action="rename_dir" data-time="move"<?php }?>><?php language_filter("Move");?></button>
-                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>data-action="copy_dir"<?php }?>><?php language_filter("Copy");?></button>
-                                        <button type="button" class="btn btn-default  btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>data-action="remove_dir"<?php }?> title="<?php language_filter("Remove");?>"><?php language_filter("Delete");?></button>
+                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>onclick="rename_dir('<?php echo addslashes($path);?>', '<?php echo addslashes($folder_name);?>', 'first');"<?php }?>><?php language_filter("Rename");?></button>
+                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>onclick="rename_dir('<?php echo addslashes($path);?>', '<?php echo addslashes($folder_name);?>', 'move');"<?php }?>><?php language_filter("Move");?></button>
+                                        <button type="button" class="btn btn-default btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>onclick="copy_dir('<?php echo addslashes($path);?>', '<?php echo addslashes($folder_name);?>', 'first');"<?php }?>><?php language_filter("Copy");?></button>
+                                        <button type="button" class="btn btn-default  btn-group-filemanager" <?php if( $show_root or $folder_name == "" ) { echo 'disabled="disabled"'; } else {?>onclick="remove_dir('<?php echo addslashes($path);?>', '<?php echo addslashes($folder_name);?>', 'first');"<?php }?> title="<?php language_filter("Remove");?>"><?php language_filter("Delete");?></button>
                                     </div>
+                                    <button type="button" class="btn btn-info btn-group-filemanager btn-sm btn-uploader" onclick="showUploader('<?php echo addslashes($path);?>')"><span class="glyphicon glyphicon-chevron-up"></span> &nbsp;<?php language_filter("Upload");?></button>
                                     <button type="button" class="btn btn-info btn-group-filemanager btn-sm btn-new"><span class="glyphicon glyphicon-plus"></span> &nbsp;<?php language_filter("New Folder");?></button>
-                                    <button type="button" class="btn btn-info btn-group-filemanager btn-sm btn-uploader" onclick="showUploader()"><span class="glyphicon glyphicon-chevron-up"></span> &nbsp;<?php language_filter("Upload");?></button>
                                 </div>
+                                <h3><?php echo $folder_title;?></h3>
+                                <a class="title-url" href="#" target="_blank"><span></span><span class="glyphicon glyphicon-new-window"></span></a>
                                 <hr />
                                 <ul class="nav nav-tabs" id="myTab">
                                     <?php if( $search == "" ){ ?><li class="active"><a href="#page" data-toggle="tab"><?php language_filter("Settings");?></a></li><?php }?>
@@ -152,13 +152,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                         <div>
 
                                             <div class="row x3-page-settings">
-																                <div class="x3-page-settings-container"></div>
+																                <div class="container"></div>
 																            </div>
 
                                         </div>
                                     </div>
                                     <div class="tab-pane" id="gallery">
-                                        <div <?php if($fullCount == '') { echo 'style="display: none;"';};?> class="manage-list-buttons">
+                                        <div <?php if($fullCount == '') { echo 'style="display: none;"';};?> class=manage-list-buttons>
 
                                         		<div class="col-sm-5 list-actions">
 
@@ -166,9 +166,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
 
                                         				<button type="button" class="btn btn-default btn-sm btn-view" data-title="<?php language_filter("Change_List_View");?>"><span class="glyphicon glyphicon-list"></span></button>
 
-																								<button type="button" class="btn btn-default btn-sm btn-sort" data-sortby="<?php language_filter("Sort by");?>" data-date="<?php language_filter("Sort date");?>" data-sort="<?php language_filter("Sort name");?>" data-filesize="<?php language_filter("Sort size");?>" data-custom="Custom"><span class="glyphicon glyphicon-sort-by-alphabet"></span></button>
-
-																								<button class="btn btn-primary btn-sm reset-sort disabled hidden">Reset folders sort</button>
+																								<button type="button" class="btn btn-default btn-sm btn-sort" data-sortby="<?php language_filter("Sort by");?>" data-date="<?php language_filter("Sort date");?>" data-sort="<?php language_filter("Sort name");?>" data-filesize="<?php language_filter("Sort size");?>"  data-custom="Custom"><span class="glyphicon glyphicon-sort-by-alphabet"></span></button>
 
                                                 <span class="button-helper"></span>
 
@@ -189,10 +187,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                         ?>
 
 
-                                        <div class="view-small manage-container">
+                                        <div class="table-responsive view-small manage-container">
                                         <div class="fixed-save"><button type="button" data-loading-text="Saving ..." class="btn btn-primary save-page btn-lg"><?php language_filter("Save");?></button></div>
                                             <table class="table manage-table">
-                                            	<tbody class="popup-parent">
+                                            	<tbody class=popup-parent>
                                                 <?php
                                                 //$count = count($root->root_files_folders);
                                                 if($fullCount == '')
@@ -204,8 +202,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                                     for ($i = $core->start; $i < $core->end; $i++)
                                                     {
                                                         $is_zip = 0;
-                                                        $reference_date = false;
-                                                        $iptc_data = false;
                                                         if($show_root)
                                                             $fileAddress[$i] = ROOT_DIR_NAME."/". $root->root_files_folders[$i];
                                                         else
@@ -217,9 +213,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                                         if( $search != '' ) {
                                                             $fileAddress[$i] = $root->root_files_folders[$i];
                                                         }
-
-                                                        // fix double slash
-                                                        $fileAddress[$i] = preg_replace('#/+#', '/', $fileAddress[$i]);
 
                                                         $fileSize[$i] = $root->formatBytes($fileAddress[$i]);
 
@@ -257,21 +250,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                                             if($ext == "jpg" or $ext == "png" or $ext == "gif" or $ext == "jpeg" or $ext == "webp")
                                                             {
                                                                 $is_img = 1;
-                                                                list($image_width, $image_height) = @getimagesize($fileAddress[$i], $file_info) ?: [0, 0];
-
-                                                                // IPTC
-                                                                if(isset($file_info["APP13"])){
-                                                                	$iptc = iptcparse($file_info["APP13"]);
-                                                                	$iptc_data = X3::get_iptc_data($iptc);
-
-
-                                                                    # image reference date
-
-
-                                                                	// reference_date 047
-                                                                	if(isset($iptc["2#047"][0]) && is_numeric($iptc["2#047"][0])) $reference_date = $iptc["2#047"][0];
-                                                                }
-
+                                                                list($image_width, $image_height) = getimagesize($fileAddress[$i]);
                                                             }
                                                         }
 
@@ -281,22 +260,22 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                                         	$dataEXIF = @exif_read_data($fileAddress[$i], 'ANY_TAG', 0);
                                                         	if(!empty($dataEXIF) && @array_key_exists('DateTimeOriginal', $dataEXIF)) $exif_time = @strtotime($dataEXIF['DateTimeOriginal']);
                                                         }
-                                                        //$fileTime[$i] = date('Y/m/d H:i:s', (empty($exif_time) ? ($reference_date ? $reference_date : filemtime($fileAddress[$i])) : $exif_time));
-                                                        $fileTime[$i] = empty($exif_time) ? ($reference_date ? $reference_date : filemtime($fileAddress[$i])) : $exif_time;
+                                                        $fileTime[$i] = date('Y/m/d H:i:s', (empty($exif_time) ? filemtime($fileAddress[$i]) : $exif_time));
+                                                        //$fileTime[$i] = date ("Y/m/d H:i:s", filemtime($fileAddress[$i]));
 
                                                         //
                                                         $exploded = explode("/", $root->root_files_folders[$i]);
                                                         $filename = (($search != '') ? end($exploded) : $root->root_files_folders[$i]);
 
                                                         ?>
-                                                        <tr id="row<?php echo $i;?>" class="manual_border_top"<?php if(!empty($iptc_data)) echo $iptc_data;?> data-name="<?php if($search != '') { $_root_files_folders = explode("/", $root->root_files_folders[$i]); echo htmlspecialchars(end( $_root_files_folders )); } else echo htmlspecialchars($root->root_files_folders[$i]);?>" data-path="<?php echo htmlspecialchars($fileAddress[$i]) ?>" data-encoded="<?php echo htmlspecialchars($fileAddress[$i]) ?>" data-ext="<?php echo $ext ?>" data-isfile="<?php echo $is_file ?>" data-isimage="<?php echo $is_img ?>" data-filesize="<?php echo $fileSize[$i] ?>" data-date="<?php echo $fileTime[$i] ?>" data-sort="<?php echo $i; ?>">
+                                                        <tr id="row<?php echo $i;?>" class="manual_border_top" data-name="<?php if($search != '') { $_root_files_folders = explode("/", $root->root_files_folders[$i]); echo end( $_root_files_folders ); } else echo $root->root_files_folders[$i];?>" data-path="<?php echo $fileAddress[$i] ?>" data-encoded="<?php echo $fileAddress[$i] ?>" data-ext="<?php echo $ext ?>" data-isfile="<?php echo $is_file ?>" data-isimage="<?php echo $is_img ?>" data-filesize="<?php echo $fileSize[$i] ?>" data-date="<?php echo $fileTime[$i] ?>">
 
-                                                            <td class="td-checkbox"><input type="checkbox" id="check_<?php echo $i;?>" value="<?php echo htmlspecialchars($root->root_files_folders[$i]); ?>" onclick="set_selected(this.value, <?php echo $i;?>, this.checked);"></td>
+                                                            <td class=td-checkbox><input type="checkbox" id="check_<?php echo $i;?>" value="<?php echo $root->root_files_folders[$i];?>" onclick="set_selected(this.value, <?php echo $i;?>, this.checked);"></td>
 
-                                                            <td class="td-name">
-                                                            <a href="<?php echo htmlspecialchars($fileAddress[$i]); ?>" target="_blank" <?php if($is_img == 1) echo 'class="popup" data-width="'.$image_width.'" data-height="'.$image_height.'" data-name="'.htmlspecialchars($filename).'" data-filesize="'.$fileSize[$i].'" rel="group1"';?>><?php if($search != '') { $_root_files_folders = explode("/", $root->root_files_folders[$i]); echo end( $_root_files_folders ); } else echo $root->root_files_folders[$i];?></a></td>
+                                                            <td class=td-name>
+                                                            <a href='<?php if($is_img == 1) echo $fileAddress[$i]; else echo "javascript:;";?>' <?php if($is_img == 1) echo "class='popup' data-width=".$image_width." data-height=".$image_height." data-name='".$filename."' data-filesize='".$fileSize[$i]."' rel='group1'";?> onclick="show_this_dir_file('<?php echo $is_file;?>', '<?php echo $is_zip;?>', '<?php echo $is_img;?>', '<?php echo addslashes($fileAddress[$i]);?>', '<?php echo base64_encode(utf8_encode($fileAddress[$i]));?>')" style="<?php if($is_file == 0) echo 'color: #9933ff;'; else echo 'color: #3366cc;';?>"><img src="<?php if($is_file == 1 and $is_zip == 1) echo 'filemanager_assets/img.php?img=zip'; elseif($is_file == 0) echo 'filemanager_assets/img.php?img=directory'; else if($is_file == 1 and $is_img == 1) echo 'filemanager_assets/img.php?img=picture'; else echo 'filemanager_assets/img.php?img=file';?>" style="margin-right: 5px;" /><?php if($search != '') { $_root_files_folders = explode("/", $root->root_files_folders[$i]); echo end( $_root_files_folders ); } else echo $root->root_files_folders[$i];?></a></td>
 
-                                                            <td class="td-button">
+                                                            <td class=td-button>
                                                                 <?php
                                                                 if($search != '')
                                                                 {
@@ -341,15 +320,15 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
   <ul class="dropdown-menu dropdown-menu-right pull-right text-left" role="menu">
   <li role="presentation" class="dropdown-header"><?php echo $myname;?></li>
 <?php if($is_file): ?>
-    <li><a href="#" data-action="remove_file"><?php language_filter("Remove");?></a></li>
-    <li><a href="#" data-action="rename_file"><?php language_filter("Rename");?></a></li>
-    <li><a href="#" data-action="rename_file" data-time="move"><?php language_filter("Move");?></a></li>
-    <li><a href="#" data-action="copy_file"><?php language_filter("Copy");?></a></li>
+    <li><a href="#" onclick="remove_file('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first');"><?php language_filter("Remove");?></a></li>
+    <li><a href="#" onclick="rename_file('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first');"><?php language_filter("Rename");?></a></li>
+    <li><a href="#" onclick="rename_file('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','move');"><?php language_filter("Move");?></a></li>
+    <li><a href="#" onclick="copy_file('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first');"><?php language_filter("Copy");?></a></li>
 <?php else: ?>
-    <li><a href="#" data-action="remove_dir"><?php language_filter("Remove");?></a></li>
-    <li><a href="#" data-action="rename_dir"><?php language_filter("Rename");?></a></li>
-    <li><a href="#" data-action="rename_dir" data-time="move"><?php language_filter("Move");?></a></li>
-    <li><a href="#" data-action="copy_dir"><?php language_filter("Copy");?></a></li>
+    <li><a href="#" onclick="remove_dir('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first');"><?php language_filter("Remove");?></a></li>
+    <li><a href="#" onclick="rename_dir('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first');"><?php language_filter("Rename");?></a></li>
+    <li><a href="#" onclick="rename_dir('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','move',true);"><?php language_filter("Move");?></a></li>
+    <li><a href="#" onclick="copy_dir('<?php echo $fileAddress[$i];?>', '<?php echo $myname;?>','first',true);"><?php language_filter("Copy");?></a></li>
 <?php endif; ?>
 	</ul>
 </div>
@@ -360,7 +339,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                                                                 }
                                                                 ?>
                                                             </td>
-                                                            <td class="td-filesize"><?php echo $fileSize[$i];?></td>
+                                                            <td class=td-filesize><?php echo $fileSize[$i];?></td>
                                                         </tr>
                                                         <?php
                                                     }
@@ -432,7 +411,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                             <?php language_filter("Loading...");?>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="show_preloader(); setTimeout(function(){loading_from_file = false; hide_preloader(); have_action = 'yes'; showFileManager('<?php if($show_root == false) echo 'here';?>', '#gallery')}, 1000)"><?php language_filter("Click to see uploaded files.");?></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="show_preloader(); setTimeout(function(){loading_from_file = false; hide_preloader(); have_action = 'yes'; active_page_tab = '#gallery'; showFileManager('<?php if($show_root == false) echo addslashes($path);?>')}, 1000)"><?php language_filter("Click to see uploaded files.");?></button>
                         </div>
                     </div>
                 </div>
@@ -448,59 +427,9 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                         <div class="modal-body">
                         		<i class="panel-help fa fa-question-circle" data-help=new_folder></i>
                         		<label for="new_folder">Create New folder in <span class='path'></span></label>
-                            <input type="text" class="form-control input-folder" id="new_folder" placeholder="foldername" style="margin-top: 3px;" spellcheck="false"/>
+                            <input type="text" class="form-control input-folder" id="new_folder" placeholder="1.foldername" style="margin-top: 3px;" />
                             <span class="label label-warning url-info">&nbsp;</span><br>
                             <span class="label label-default url-helper">&nbsp;</span>
-
-                            <div class="panel panel-default">
-
-															<div class="panel-body" style="padding-bottom: 15px;">
-
-																<div class="text-center"><a role="button" data-toggle="collapse" href=".new-folder-options"></a></div>
-
-																<div class="collapse new-folder-options">
-
-																  <div class="form-group">
-																  	<a href="#" class="show-help" data-help="page_title"></a>
-																  	<label for="new_folder_title">Page Title</label>
-																    <input type="text" class="form-control" id="new_folder_title">
-																  </div>
-
-																  <div class="form-group">
-																  	<a href="#" class="show-help" data-help="menu_label"></a>
-																    <label for="new_folder_label">Menu Label</label>
-																    <input type="text" class="form-control" id="new_folder_label">
-																  </div>
-
-																  <div class="form-group">
-																  	<a href="#" class="show-help" data-help="page_link"></a>
-																    <label for="new_folder_link">Link</label>
-																    <input type="text" class="form-control" id="new_folder_link">
-																  </div>
-
-																  <div class="form-group new-folder-target-container hidden">
-																  	<a href="#" class="show-help" data-help="page_link_target"></a>
-																    <label for="new_folder_target">Link target</label>
-															      <select id="new_folder_target" class="form-control">
-														        	<option value="auto">auto</option>
-														        	<option value="_self">_self</option>
-														        	<option value="_blank">_blank</option>
-														        	<option value="popup">Popup Window</option>
-														        	<option value="x3_popup">X3 Popup</option>
-														        	<option value="x3_modal">X3 Modal</option>
-														        </select>
-																  </div>
-
-																  <div class="form-group" style="margin-bottom:0;">
-																	  <a href="#" class="show-help" data-help="page_hidden"></a>
-																    <label>
-																      <input type="checkbox" id="new_folder_hidden"> &nbsp;<?php language_filter("Hide")?>
-																    </label>
-															    </div>
-
-																</div>
-															</div>
-														</div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-default" data-dismiss="modal"><?php language_filter("Cancel");?></button>
@@ -526,6 +455,27 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                             </div>
                             <button class="btn btn-default" data-dismiss="modal"><?php language_filter("Cancel");?></button>
                             <button class="btn btn-success btn-key" type="button" onclick="create_zip();"><?php language_filter("Create");?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal" id="newbackupFile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel_backup"><?php language_filter("Create Backup");?></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info" style="text-align: center; font-weight: bold;"><?php language_filter("Please write zip file name without extension.");?></div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group col-md-4">
+                                <input type="text" class="form-control" id="new_zip_backup" placeholder="<?php language_filter("Zip File Name");?>" style="float: left; margin-top: 0px;" onchange="set_new_zipFile_name(this.value);"/>
+                            </div>
+                            <button class="btn btn-default" data-dismiss="modal"><?php language_filter("Cancel");?></button>
+                            <button class="btn btn-success" type="button" onclick="create_backup();"><?php language_filter("Create");?></button>
                         </div>
                     </div>
                 </div>
@@ -593,6 +543,81 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                 </div>
             </div>
 
+            <div class="modal" id="share_files" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel_share"><?php language_filter("Share");?></h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="send_to" class="col-sm-2 control-label"><?php language_filter("Send to");?></label>
+                                    <div class="col-sm-9">
+                                        <input type="email" class="form-control" id="send_to" placeholder="email@example.com">
+                                    </div>
+                                    <div class="col-sm-1" style="margin-top: 7px;">
+                                        <span class="glyphicon glyphicon-plus-sign" style="cursor: pointer;" onclick="add_send_to();"></span>
+                                    </div>
+                                </div>
+                                <div id="send_to_place">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="send_to" class="col-sm-2 control-label"><?php language_filter("Send to");?></label>
+                                    <div class="col-sm-10">
+                                        <textarea id="extra_send_to" class="form-control" rows="3" placeholder="email@example.com,email2@example.com,email3@example.com,email4@example.com,email5@example.com"></textarea>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="form-group">
+                                    <label for="from" class="col-sm-2 control-label"><?php language_filter("From");?></label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control" id="from" placeholder="email@example.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="from" class="col-sm-2 control-label"><?php language_filter("subject");?></label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="subject" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message" class="col-sm-2 control-label"><?php language_filter("Message");?></label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" rows="4" id="message"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php language_filter("Cancel")?></button>
+                            <button type="button" class="btn btn-warning" onclick="download_selected_files();"><?php language_filter("Download")?></button>
+                            <button type="button" class="btn btn-primary" onclick="share_selected_files();"><?php language_filter("Share")?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal" id="download_files" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel_download"><?php language_filter("Download");?></h4>
+                        </div>
+                        <div class="modal-body">
+                            <p><?php language_filter("Do_you_want_to_download_selected_files_or_folders"); ?></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><?php language_filter("Cancel")?></button>
+                            <button type="button" class="btn btn-primary" onclick="download_selected_files();"><?php language_filter("Download")?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
                 <script type="text/javascript">
 
                  new_name = "";
@@ -600,7 +625,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
                  is_root = '<?php if($show_root) echo "true"; else echo "false";?>';
                  this_dir_path = "";
                  this_file_path = "";
-                 here = "<?php echo addslashes(rtrim($path, '/')); ?>";
+                 here = ("<?php echo $path;?>").replace(/\/$/, '');
                  is_rename = false;
                  is_move = false;
                  new_folder_path = "";
@@ -614,6 +639,17 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
 
                  root_dir_name = '<?php echo ROOT_DIR_NAME ?>';
                  root_dir_name_parent_count = <?php echo substr_count(ROOT_DIR_NAME, "../"); ?>;
+                 <?php
+                     /*if(is_array($root->root_files_folders)){
+                         if(!empty($root->root_files_folders)){
+                            $all_files_folders = implode(", ", $root->root_files_folders);
+                         }
+                     } else {
+                        $all_files_folders = "";
+                     }*/
+                 ?>
+
+
 
                 <?php
                 if( $search == "" ):
@@ -632,7 +668,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQ
 								// get x3 page settings
                var page_json = <?php echo $page_json; ?>;
                mtreeActive();
-               get_x3_page_settings(page_json, '<?php echo addslashes($path) . '/page.json'; ?>');
+               get_x3_page_settings(page_json, '<?php echo $path.'/page.json'; ?>');
 
                 <?php
                 endif;

@@ -4,64 +4,26 @@ Class Helpers {
 
   static $file_cache;
   static $use_data = true;
-  static $folders_path = './content/folders.json';
-  static $folders = array();
-  static $urls = array();
-  static $site_updated = false;
+  static $data;
+  //static $bugme = '';
 
-  // get SCRIPT_NAME with fallback to PHP_SELF (which could be formatted like index.php/some/path
-  public static function script_name(){
-    if(isset($_SERVER['SCRIPT_NAME'])) return $_SERVER['SCRIPT_NAME'];
-    $arr = explode('index.php', $_SERVER['PHP_SELF']); // remove index.php/trailing/junk
-    return $arr[0] . 'index.php';
-  }
+  static function load_data() {
 
-  // refresh folders
-  public static function refresh_folders(){
-  	if(!file_exists(self::$folders_path) && !is_writable('./content')) return;
-  	self::$folders = self::get_dirs('./content');
+  	# check if $use_data and $data is empty
+  	if(self::$use_data && empty(self::$data)){
 
-		// write folders.json
-		if(!empty(self::$folders)) {
-			$json = phpversion() < 5.4 ? json_encode(self::$folders, JSON_FORCE_OBJECT) : json_encode(self::$folders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
-			if($json) return file_put_contents(self::$folders_path, $json);
-		}
-  }
+  		# load it
+  		if(file_exists(Config::$cache_folder . '/pages/data.json')) {
+				self::$data = json_decode(file_get_contents(Config::$cache_folder . '/pages/data.json'), true);
+				if(empty(self::$data)) self::$use_data = false;
 
-  // get folders.json
-	static function get_folders(){
-
-		// load folders.json if exists
-		if(file_exists(self::$folders_path)){
-			$folders_data = file_get_contents(self::$folders_path);
-			if(!empty($folders_data)) self::$folders = @json_decode($folders_data, TRUE);
-		}
-
-		// create new folders.json if folders empty
-		if(empty(self::$folders)) self::refresh_folders();
-
-		// create urls
-		if(!empty(self::$folders)) {
-			foreach (self::$folders as $key => $value) {
-				if(isset($value['url'])) self::$urls[$value['url']] = './content/' . $key;
-			}
-		}
-  }
-
-  // get dirs
-  private static function get_dirs($dir){
-  	$arr = array();
-  	$dirs = glob($dir . '/*', GLOB_ONLYDIR|GLOB_NOSORT);
-  	if(empty($dirs)) return $arr;
-		foreach($dirs as $dir){
-			$content_path = str_replace('./content/', '', $dir);
-			if(!$content_path || $content_path === 'custom' || strpos(basename($dir), '_') === 0) continue;
-			$arr[$content_path]['url'] = preg_replace('/\d+?\./', '', $content_path);
-			foreach (self::get_dirs($dir) as $key => $value) {
-				$arr[$key] = $value;
-			}
-		}
-		return $arr;
+			# try to create
+			} else {
+				include './app/data.inc.php';
+				self::$data = Data::make();
+				if(!self::$data) self::$use_data = false;
+	  	}
+  	}
   }
 
   static function redirect($val) {
@@ -70,7 +32,7 @@ Class Helpers {
   		$location = $val;
   	} else {
   		$uri = $val[0] !== '/' ? $_SERVER['REQUEST_URI'] : ''; // is relative to current path
-  		$location = X3::$server_protocol . $_SERVER['HTTP_HOST'] . $uri . $val;
+  		$location = PROTOCOL.$_SERVER['HTTP_HOST'].$uri.$val;
   	}
   	header("HTTP/1.1 301 Moved Permanently");
   	header("Location: ".$location, true, 301);
@@ -85,30 +47,12 @@ Class Helpers {
   static function url_to_file_path($url, $folders_only = true) {
 
   	# if the url is empty, we're looking for the index page
-	  $url = empty($url) ? 'index' : $url;
+	  $url = empty($url) ? 'index': $url;
 
   	# $use_data
   	if(self::$use_data){
   		if(preg_match('/^_/', $url) || strpos($url,'/_') !== false) return false;
-
-    	// isset
-      foreach (array($url, str_replace('_',' ',$url), str_replace('_','.',$url)) as $name) {
-        if(isset(self::$urls[$name])) {
-          return self::$urls[$name];
-        } else if(file_exists('./content/' . $name)){
-          return './content/' . $name;
-        }
-      }
-      return false;
-
-    	/*if(isset(self::$urls[$url])){
-    		return self::$urls[$url];
-
-    	// check if content path exists
-    	} else {
-    		$dir_path = './content/' . $url;
-    		return file_exists($dir_path) ? $dir_path : false;
-    	}*/
+    	return isset(self::$data[$url]) ? self::$data[$url] : false;
 
     # old-school
   	} else {
@@ -120,6 +64,7 @@ Class Helpers {
 	      # Look for a folder at the current path that doesn't start with an underscore
 	      if(preg_match('/^_/', $u)) return false;
 	      $matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/', $folders_only, false));
+	      //if(!preg_match('/^_/', $u)) $matches = array_keys(Helpers::list_files($file_path, '/^(\d+?\.)?'.$u.'$/', $folders_only, false));
 
 	      # No matches means a bad url
 	      if(empty($matches)) return false;
@@ -128,9 +73,11 @@ Class Helpers {
 	    return $file_path;
   	}
   }
-
-  // file cache
   static function file_cache($dir = false) {
+    /*if(!isset(self::$file_cache[$dir])) self::build_file_cache($dir);
+    if($dir && !isset(self::$file_cache[$dir])) return array();
+    return $dir ? self::$file_cache[$dir] : self::$file_cache;*/
+
     if(!empty($dir)){
     	if(!isset(self::$file_cache[$dir])) self::build_file_cache($dir);
     	return self::$file_cache[$dir];
@@ -141,13 +88,11 @@ Class Helpers {
   static function build_file_cache($dir = '.') {
     # build file cache
     $files = glob($dir.'/*', GLOB_NOSORT);
+    //$files = is_array($files) ? $files : array();
     if($files && count($files)){
     	foreach($files as $path) {
 	      $file = basename($path);
-        //$file = preg_replace('/\s/', '_', basename($path));
 	    	$is_dir = is_dir($path);
-        //$dots = substr_count($file, '.');
-        //if($dots > 1) $file = preg_replace('/\./', '_', $file, $dots - 1);
 	    	//self::$bugme .= PHP_EOL . '<!-- ' . $path . ' -->';
 	      self::$file_cache[$dir][] = array(
 	        'path' => $path,
@@ -162,21 +107,20 @@ Class Helpers {
 
   static function list_files($dir, $regex, $folders_only = false, $sort = true) {
     $files = array();
-    //if(!$regex && $folders_only) $regex = X3Config::$config["settings"]["hide_folders"] ? '\/\d+?\.[^\/]+$/' : '\/[^_][^\/]+$/';
-    if(!$regex && $folders_only) $regex = '\/[^_][^\/]+$/';
 
     # $use_data
     if($folders_only && self::$use_data) {
-    	foreach (self::$folders as $key => $val) {
-    		if(preg_match('/' . preg_quote((string)$dir, '/') . $regex, './content/' . $key) && (!isset($val['hidden']) || !$val['hidden'] || substr($key, -5) === 'index')){
-    			$files[basename($key)] = './content/' . $key;
-    		}
+    	$results = preg_grep('/' . preg_quote($dir, '/') . '\/\d+?\.[^\/]+$/', self::$data);
+    	if(count($results) > 0) {
+    		foreach ($results as $file) {
+	    		$files[basename($file)] = $file;
+	    	}
     	}
 
     } else {
     	foreach(self::file_cache($dir) as $file) {
 	      # if file matches regex, continue
-        if(isset($file['file_name']) && preg_match($regex, $file['file_name'])) {
+	      if(isset($file['file_name']) && preg_match($regex, $file['file_name'])) {
 	        # if $folders_only is true and the file is not a folder, skip it
 	        if($folders_only && !$file['is_folder']) continue;
 	        # otherwise, add file to results list
@@ -192,35 +136,24 @@ Class Helpers {
 
   static function site_last_modified() {
 
-    // cached value (just in case)
-    if(self::$site_updated) return self::$site_updated;
-
   	# content touch
   	$content = filemtime(Config::$content_folder);
 
 		# app updated
-		$app = filemtime(Config::$app_folder.'/x3.inc.php');
+		$app = filemtime(Config::$app_folder.'/stacey.inc.php');
 
 		# touch file (optional)
     $touch = Config::$root_folder.'config/touch.txt';
     $touch_time = file_exists($touch) ? filemtime($touch) : 0;
 
-    # global parent config files (../global.json and ../../global.json)
-    $global_parent_config_time = 0;
-    $global_parent_parent_config_time = 0;
-    if(X3Config::$config["userx"]){
-      $root_parent = dirname(dirname(__DIR__));
-      $global_parent_config =  $root_parent . '/global.json';
-      $global_parent_parent_config =  dirname($root_parent) . '/global.json';
-      if(file_exists($global_parent_config)) $global_parent_config_time = @filemtime($global_parent_config);
-      if(file_exists($global_parent_parent_config)) $global_parent_parent_config_time = @filemtime($global_parent_parent_config);
-    }
+    # global parent config (optional)
+    $basedir_str = ini_get('open_basedir');
+    $global_json = dirname(dirname(dirname(__FILE__))).'/global.json';
+    $global_json_time = empty($basedir_str) && file_exists($global_json) ? filemtime($global_json) : 0;
 
     # updated
-    //$updated = max($content, $app, $touch_time, $global_json_time);
-    self::$site_updated = max($content, $app, $touch_time, $global_parent_config_time, $global_parent_parent_config_time);
-    //return strval(date('c', self::$site_updated));
-    return self::$site_updated;
+    $updated = max($content, $app, $touch_time, $global_json_time);
+    return strval(date('c', $updated));
   }
 
   static function translate_named_entities($string) {
@@ -229,16 +162,6 @@ Class Helpers {
       $mapping[$entity] = '&#' . ord($char) . ';';
     }
     return str_replace(array_keys($mapping), $mapping, $string);
-  }
-
-  // javascript html attribute friendly
-  public static function attribute_friendly($str){
-    if(empty($str)) return '';
-    $name = function_exists('mb_strtolower') ? mb_strtolower($str, mb_detect_encoding($str)) : strtolower($str);
-    // remove 1.number and extension.jpg and lowercase
-    $name = preg_replace(array('/\.[\w\d]+?$/', '/^\d+?\./'), '', $name);
-    return trim(preg_replace('/\-+/', '-', str_replace(str_split(' .,()[]/"\\\'!?#`~@_$%^&*+=:;<>{}'), '-', $name)), '-');
-    // preg_split('//u', ' .,()[]/"“’\\\'!?#`~@_$%^&*+=:;<>{}', -1, PREG_SPLIT_NO_EMPTY)
   }
 
 }

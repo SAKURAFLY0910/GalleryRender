@@ -4,7 +4,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include '../config.php';
-if(function_exists('mysqli_report')) mysqli_report(MYSQLI_REPORT_OFF);
 
 ?>
 
@@ -13,10 +12,10 @@ if(function_exists('mysqli_report')) mysqli_report(MYSQLI_REPORT_OFF);
 <meta name="robots" content="noindex">
 <meta name="googlebot" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link href="https://fonts.bunny.net/css?family=montserrat:500|source-sans-pro:400,400i,600,600i" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<link href="../filemanager_css/x3.panel.min.css?v=<?php echo X3Config::$config["x3_panel_version"]; ?>" rel="stylesheet" />
+<link href='https://cdn.jsdelivr.net/bootstrap/3.0.0/css/bootstrap.min.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Source+Sans+Pro:400,400i,600,600i" rel="stylesheet">
+<script src='https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min.js'></script>
+<link href="../filemanager_css/x3.panel.css?v=<?php echo $x3_config["x3_panel_version"]; ?>" rel="stylesheet" />
  <style type="text/css">
      body {
          padding-top: 40px;
@@ -92,18 +91,16 @@ function addItem($status, $title, $description, $add_link = true){
 	return $str;
 }
 
-if(X3Config::$config["back"]["panel"]["use_db"]) {
-	if(empty(X3Config::$config["back"]["panel"]["db_host"]) || empty(X3Config::$config["back"]["panel"]["db_user"]) || empty(X3Config::$config["back"]["panel"]["db_pass"]) || empty(X3Config::$config["back"]["panel"]["db_name"])){
+if($x3_config["back"]["panel"]["use_db"]) {
+	if(empty($x3_config["back"]["panel"]["db_host"]) || empty($x3_config["back"]["panel"]["db_user"]) || empty($x3_config["back"]["panel"]["db_pass"]) || empty($x3_config["back"]["panel"]["db_name"])){
 		$warning .= addItem("warning", "Missing database details", "You have enabled the database-version of the panel, but one or more database connection details are empty.");
 	} else if(function_exists('mysqli_connect')){
 
 		# DB vars
-		$dbname = X3Config::$config["back"]["panel"]["db_name"];
-		$dbuser = X3Config::$config["back"]["panel"]["db_user"];
-		$dbpass = X3Config::$config["back"]["panel"]["db_pass"];
-		$dbhost = X3Config::$config["back"]["panel"]["db_host"];
-
-    //var_dump($dbname);var_dump($dbuser);var_dump($dbpass);var_dump($dbhost);exit;
+		$dbname = $x3_config["back"]["panel"]["db_name"];
+		$dbuser = $x3_config["back"]["panel"]["db_user"];
+		$dbpass = $x3_config["back"]["panel"]["db_pass"];
+		$dbhost = $x3_config["back"]["panel"]["db_host"];
 
 		# Check DB connection
 		$connection = @new mysqli($dbhost, $dbuser, $dbpass, $dbname);

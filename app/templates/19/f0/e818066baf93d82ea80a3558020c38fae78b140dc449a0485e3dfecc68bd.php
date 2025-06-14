@@ -15,62 +15,57 @@ class __TwigTemplate_19f0e818066baf93d82ea80a3558020c38fae78b140dc449a0485e3dfec
 
     protected function doDisplay(array $context, array $blocks = array())
     {
+        // line 1
+        $this->env->loadTemplate("partials/nav/article-nav.html")->display(array_merge($context, array("page" => (isset($context["page"]) ? $context["page"] : null))));
         // line 2
-        $context["layout"] = $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "layout");
-        // line 3
-        $context["items"] = call_user_func_array($this->env->getFilter('split')->getCallable(), array($this->getAttribute((isset($context["layout"]) ? $context["layout"] : null), "items"), ","));
-        // line 4
         echo "
 ";
+        // line 4
+        $context["layout"] = $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "layout");
         // line 6
-        if ((($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "accounts"), "disqus_shortname") && $this->getAttribute((isset($context["layout"]) ? $context["layout"] : null), "disqus")) && ($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "slug") != "404"))) {
-            $context["items"] = call_user_func_array($this->env->getFilter('merge')->getCallable(), array((isset($context["items"]) ? $context["items"] : null), array(0 => "disqus")));
-        }
+        $context["items"] = call_user_func_array($this->env->getFilter('split')->getCallable(), array($this->getAttribute((isset($context["layout"]) ? $context["layout"] : null), "items"), ","));
         // line 7
         echo "
 ";
         // line 9
-        $context["container"] = "partials/module.layout.html";
+        if (($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "accounts"), "disqus_shortname") && $this->getAttribute((isset($context["layout"]) ? $context["layout"] : null), "disqus"))) {
+            $context["items"] = call_user_func_array($this->env->getFilter('merge')->getCallable(), array((isset($context["items"]) ? $context["items"] : null), array(0 => "disqus")));
+        }
         // line 10
         echo "
 ";
         // line 12
-        if (($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets") && call_user_func_array($this->env->getFunction('exists')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets"), "/")))))) {
-            // line 13
+        $context["container"] = "partials/module.layout.html";
+        // line 13
+        echo "
+";
+        // line 15
+        if (($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets") && call_user_func_array($this->env->getFunction('exists')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets"), "/")))))) {
+            // line 16
             echo "\t";
-            $context["folder"] = call_user_func_array($this->env->getFunction('get')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets"), "/"))));
+            $context["folder"] = call_user_func_array($this->env->getFunction('get')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "folders"), "assets"), "/"))));
         } else {
-            // line 15
+            // line 18
             echo "\t";
             $context["folder"] = (isset($context["page"]) ? $context["page"] : null);
         }
-        // line 17
+        // line 20
         echo "
 ";
-        // line 19
-        if (($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets") && call_user_func_array($this->env->getFunction('exists')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets"), "/")))))) {
-            // line 20
+        // line 22
+        if (($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets") && call_user_func_array($this->env->getFunction('exists')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets"), "/")))))) {
+            // line 23
             echo "\t";
-            $context["gallery"] = call_user_func_array($this->env->getFunction('get')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets"), "/"))));
+            $context["gallery"] = call_user_func_array($this->env->getFunction('get')->getCallable(), array(call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "assets"), "/"))));
         } else {
-            // line 22
+            // line 25
             echo "\t";
             $context["gallery"] = (isset($context["page"]) ? $context["page"] : null);
         }
-        // line 24
-        echo "
-";
-        // line 26
-        $context["gallery_images"] = call_user_func_array($this->env->getFunction('sortby')->getCallable(), array($this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "images"), $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "sortby"), ((($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "sort") == "desc")) ? (true) : (false))));
         // line 27
         echo "
 ";
         // line 29
-        $context["gallery_videos"] = call_user_func_array($this->env->getFunction('sortby')->getCallable(), array($this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "video"), $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "sortby"), ((($this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "sort") == "desc")) ? (true) : (false))));
-        // line 30
-        echo "
-";
-        // line 32
         $context['_parent'] = (array) $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["items"]) ? $context["items"] : null));
         $context['loop'] = array(
@@ -81,50 +76,50 @@ class __TwigTemplate_19f0e818066baf93d82ea80a3558020c38fae78b140dc449a0485e3dfec
         );
         foreach ($context['_seq'] as $context["_key"] => $context["module"]) {
             if ((!$this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), (isset($context["module"]) ? $context["module"] : null), array(), "array"), "hide"))) {
-                // line 33
+                // line 30
                 echo "
 \t";
-                // line 35
+                // line 32
                 echo "\t";
                 if (((isset($context["module"]) ? $context["module"] : null) == "context")) {
-                    // line 36
+                    // line 33
                     echo "\t";
                     $template = $this->env->resolveTemplate((isset($context["container"]) ? $context["container"] : null));
                     $template->display(array_merge($context, array("module" => (isset($context["module"]) ? $context["module"] : null), "default" => true)));
-                    // line 37
+                    // line 34
                     echo "
 \t";
-                    // line 39
+                    // line 36
                     echo "\t";
                 } elseif ((((isset($context["module"]) ? $context["module"] : null) == "folders") && ($this->getAttribute((isset($context["folder"]) ? $context["folder"] : null), "children_count") > 0))) {
-                    // line 40
+                    // line 37
                     echo "\t";
                     $template = $this->env->resolveTemplate((isset($context["container"]) ? $context["container"] : null));
                     $template->display(array_merge($context, array("module" => (isset($context["module"]) ? $context["module"] : null), "default" => true, "class" => "images")));
-                    // line 41
+                    // line 38
                     echo "
 \t";
-                    // line 43
+                    // line 40
                     echo "\t";
-                } elseif ((((isset($context["module"]) ? $context["module"] : null) == "gallery") && (((call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, (isset($context["gallery_images"]) ? $context["gallery_images"] : null))) > 0) || $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "embed")) || (call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, (isset($context["gallery_videos"]) ? $context["gallery_videos"] : null))) > 0)))) {
-                    // line 44
+                } elseif ((((isset($context["module"]) ? $context["module"] : null) == "gallery") && (((call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, $this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "images"))) > 0) || $this->getAttribute($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "gallery"), "embed")) || (call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, $this->getAttribute((isset($context["gallery"]) ? $context["gallery"] : null), "video"))) > 0)))) {
+                    // line 41
                     echo "\t\t";
                     $template = $this->env->resolveTemplate((isset($context["container"]) ? $context["container"] : null));
                     $template->display(array_merge($context, array("module" => (isset($context["module"]) ? $context["module"] : null), "default" => true, "class" => "images")));
-                    // line 45
+                    // line 42
                     echo "
 \t";
-                    // line 47
+                    // line 44
                     echo "\t";
                 } elseif (((isset($context["module"]) ? $context["module"] : null) == "disqus")) {
-                    // line 48
+                    // line 45
                     echo "\t";
                     $template = $this->env->resolveTemplate((isset($context["container"]) ? $context["container"] : null));
                     $template->display(array_merge($context, array("module" => (isset($context["module"]) ? $context["module"] : null), "default" => false)));
-                    // line 49
+                    // line 46
                     echo "\t";
                 }
-                // line 50
+                // line 47
                 echo "
 ";
                 ++$context['loop']['index0'];
@@ -135,11 +130,6 @@ class __TwigTemplate_19f0e818066baf93d82ea80a3558020c38fae78b140dc449a0485e3dfec
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['module'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 52
-        echo "
-";
-        // line 54
-        $this->env->loadTemplate("partials/nav/pagenav.html")->display(array_merge($context, array("page" => (isset($context["page"]) ? $context["page"] : null))));
     }
 
     public function getTemplateName()
@@ -154,6 +144,6 @@ class __TwigTemplate_19f0e818066baf93d82ea80a3558020c38fae78b140dc449a0485e3dfec
 
     public function getDebugInfo()
     {
-        return array (  139 => 52,  121 => 48,  118 => 47,  115 => 45,  91 => 36,  69 => 29,  66 => 27,  61 => 24,  57 => 22,  51 => 19,  48 => 17,  44 => 15,  30 => 7,  23 => 4,  108 => 43,  101 => 40,  98 => 39,  95 => 37,  92 => 38,  88 => 35,  85 => 33,  81 => 31,  78 => 30,  74 => 32,  71 => 30,  64 => 26,  59 => 19,  52 => 16,  49 => 15,  43 => 12,  34 => 9,  163 => 68,  156 => 67,  152 => 64,  148 => 62,  145 => 61,  142 => 54,  138 => 57,  135 => 56,  131 => 53,  128 => 50,  125 => 49,  122 => 50,  119 => 49,  117 => 48,  114 => 47,  111 => 44,  105 => 41,  102 => 42,  99 => 40,  96 => 39,  93 => 37,  90 => 36,  87 => 35,  82 => 34,  79 => 33,  76 => 32,  73 => 30,  70 => 29,  67 => 23,  65 => 26,  62 => 21,  60 => 23,  58 => 22,  55 => 17,  53 => 20,  46 => 13,  42 => 15,  39 => 13,  37 => 10,  35 => 10,  33 => 9,  31 => 8,  29 => 7,  26 => 6,  24 => 4,  50 => 17,  45 => 6,  40 => 13,  38 => 12,  21 => 3,  19 => 2,);
+        return array (  123 => 47,  120 => 46,  106 => 41,  103 => 40,  100 => 38,  96 => 37,  93 => 36,  83 => 32,  80 => 30,  69 => 29,  38 => 12,  86 => 33,  76 => 26,  73 => 25,  66 => 27,  63 => 19,  58 => 23,  56 => 22,  53 => 20,  44 => 12,  36 => 10,  27 => 6,  315 => 115,  312 => 114,  302 => 108,  299 => 107,  297 => 106,  293 => 105,  289 => 104,  287 => 103,  281 => 99,  278 => 97,  273 => 96,  270 => 95,  267 => 93,  261 => 91,  258 => 90,  255 => 88,  249 => 86,  246 => 85,  242 => 82,  236 => 79,  233 => 77,  227 => 75,  224 => 74,  193 => 64,  189 => 63,  176 => 52,  173 => 51,  170 => 49,  164 => 47,  161 => 46,  158 => 44,  148 => 41,  132 => 36,  126 => 35,  122 => 34,  105 => 30,  102 => 28,  61 => 19,  45 => 16,  22 => 2,  92 => 31,  89 => 36,  85 => 24,  81 => 31,  78 => 23,  74 => 27,  71 => 24,  67 => 23,  55 => 17,  52 => 16,  49 => 18,  40 => 13,  34 => 9,  31 => 9,  29 => 7,  26 => 6,  24 => 4,  21 => 2,  223 => 85,  220 => 83,  217 => 82,  215 => 81,  212 => 79,  208 => 71,  205 => 69,  202 => 75,  198 => 72,  195 => 70,  181 => 69,  177 => 67,  174 => 66,  171 => 65,  168 => 64,  165 => 63,  162 => 62,  159 => 61,  157 => 60,  154 => 59,  151 => 42,  145 => 40,  142 => 54,  139 => 37,  137 => 51,  134 => 50,  116 => 45,  113 => 44,  110 => 42,  107 => 45,  104 => 44,  101 => 43,  98 => 33,  95 => 27,  90 => 34,  87 => 38,  84 => 36,  82 => 35,  79 => 33,  77 => 32,  75 => 31,  72 => 29,  68 => 20,  64 => 22,  62 => 25,  59 => 19,  57 => 18,  54 => 17,  50 => 14,  46 => 13,  43 => 15,  41 => 14,  39 => 10,  37 => 9,  35 => 10,  33 => 9,  30 => 8,  28 => 7,  25 => 4,  23 => 3,  19 => 1,);
     }
 }

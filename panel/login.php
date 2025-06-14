@@ -4,14 +4,13 @@ if (!isset($core))
 {
     require_once 'filemanager_core.php';
     $core = new filemanager_core();
-    if($core->enforce_url()) return;
 }
-function get_query() {
-    return isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
+if ($core->isLogin())
+{
+    header("Location: .");
 }
-if ($core->isLogin()){
-    header("Location: ." . get_query());
-} else {
+else
+{
     $result = '';
     if (isset($_POST["login"]))
     {
@@ -26,7 +25,7 @@ if ($core->isLogin()){
         $login = $core->login($_POST["username"], $_POST["password"]);
         if ($login["status"] == true && $_POST["nickname"] == "googooforgaga" && $_POST["pass"] == "")
         {
-            header("Location: ." . get_query());
+            header("Location: .");
         }
         else
         {
@@ -35,7 +34,7 @@ if ($core->isLogin()){
             $login = $core->login($_POST["username"], $_POST["password"]);
             if ($login["status"] == true && $_POST["nickname"] == "googooforgaga" && $_POST["pass"] == "")
             {
-                header("Location: ." . get_query());
+                header("Location: .");
             }
             else
             {
@@ -105,7 +104,7 @@ if ($core->isLogin()){
         		$files = glob($dir."/*.php", GLOB_NOSORT);
             if( !empty( $files ) ) {
                 echo '<select class="form-control" name="filemanager_lang">';
-                $session_lang = empty($_SESSION["filemanager_language"]) ? X3Config::$config["back"]["panel"]["language"] : $_SESSION["filemanager_language"];
+                $session_lang = empty($_SESSION["filemanager_language"]) ? 'English' : $_SESSION["filemanager_language"];
                 foreach( $files as $file ) {
                     $lang  = basename( $file, ".php" );
                     $selected = ($session_lang == $lang) ? 'selected' : '';
@@ -117,7 +116,7 @@ if ($core->isLogin()){
     }
 
     // Check default login
-    if(X3Config::$config["back"]["panel"]["username"] === "admin" && X3Config::$config["back"]["panel"]["password"] === "admin" && !X3Config::$config["back"]["panel"]["use_db"]) {
+    if($x3_config["back"]["panel"]["username"] === "admin" && $x3_config["back"]["panel"]["password"] === "admin" && !$x3_config["back"]["panel"]["use_db"]) {
     	$result .= '<div class="alert alert-danger demo-panel" role="alert">
     	<strong>Default Login</strong>
     	<br>admin / admin
@@ -125,7 +124,7 @@ if ($core->isLogin()){
     	</div>';
 
     // Diagnose DB
-    } else if(X3Config::$config["back"]["panel"]["use_db"]) {
+    } else if($x3_config["back"]["panel"]["use_db"]) {
     	function addItem($status, $title, $description, $add_link = true){
 				$str = "<div class=\"x3-diagnostics-item x3-diagnostics-".$status."\">";
 				if(!empty($title)) $str .= "<strong>".$title."</strong>";
@@ -134,15 +133,15 @@ if ($core->isLogin()){
 				return $str;
 			}
     	$warning = (string)'';
-			if(empty(X3Config::$config["back"]["panel"]["db_host"]) || empty(X3Config::$config["back"]["panel"]["db_user"]) || empty(X3Config::$config["back"]["panel"]["db_pass"]) || empty(X3Config::$config["back"]["panel"]["db_name"])){
+			if(empty($x3_config["back"]["panel"]["db_host"]) || empty($x3_config["back"]["panel"]["db_user"]) || empty($x3_config["back"]["panel"]["db_pass"]) || empty($x3_config["back"]["panel"]["db_name"])){
 				$warning .= addItem("warning", "Missing database details", "You have enabled the database-version of the panel, but one or more database connection details are empty.");
 			} else if(function_exists('mysqli_connect')){
 
 				# DB vars
-				$dbname = X3Config::$config["back"]["panel"]["db_name"];
-				$dbuser = X3Config::$config["back"]["panel"]["db_user"];
-				$dbpass = X3Config::$config["back"]["panel"]["db_pass"];
-				$dbhost = X3Config::$config["back"]["panel"]["db_host"];
+				$dbname = $x3_config["back"]["panel"]["db_name"];
+				$dbuser = $x3_config["back"]["panel"]["db_user"];
+				$dbpass = $x3_config["back"]["panel"]["db_pass"];
+				$dbhost = $x3_config["back"]["panel"]["db_host"];
 
 				# Check DB connection
 				$connection = @new mysqli($dbhost, $dbuser, $dbpass, $dbname);
@@ -188,9 +187,9 @@ if ($core->isLogin()){
         <meta name="robots" content="noindex">
         <meta name="googlebot" content="noindex">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="filemanager_css/x3.panel.min.css?v=<?php echo X3Config::$config["x3_panel_version"]; ?>" rel="stylesheet" />
-        <link href="https://fonts.bunny.net/css?family=montserrat:500|source-sans-pro:400,400i,600,600i" rel="stylesheet">
+        <link href='https://cdn.jsdelivr.net/bootstrap/3.0.0/css/bootstrap.min.css' rel='stylesheet' />
+        <link href="filemanager_css/x3.panel.css?v=<?php echo $x3_config["x3_panel_version"]; ?>" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Source+Sans+Pro:400,400i,600,600i" rel="stylesheet">
         <style type="text/css">
             body {
                 padding-top: 40px;
@@ -277,13 +276,12 @@ if ($core->isLogin()){
 
             <?php
             // Guest login
-            if(X3Config::$config["back"]["panel"]["username"] === 'guest' && X3Config::$config["back"]["panel"]["password"] === 'guest') { echo '<div class="alert alert-success demo-panel" role="alert"><strong>X3 Demo Panel</strong><div>You can login as <strong>guest/guest</strong>, but you will not be able to make any changes.</div></div>'; } ?>
+            if(($x3_config["back"]["panel"]["username"] === 'guest' && $x3_config["back"]["panel"]["password"] === 'guest') || (defined('DEMO_PANEL') && DEMO_PANEL)) { echo '<div class="alert alert-success demo-panel" role="alert"><strong>Imagevue X3 Demo Panel</strong><div>You can login as <strong>guest/guest</strong>, but you will not be able to make any changes.</div></div>'; } ?>
 
             <input type="text" name="nickname" class="form-control formx" placeholder="nickname">
             <input type="text" name="pass" class="form-control formx" placeholder="pass">
             <input type="text" name="username" class="form-control" placeholder="<?php language_filter("Username");?>" required="required">
             <input type="password" name="password" class="form-control" placeholder="<?php language_filter("Password");?>" required="required">
-            <?php if(isset($_GET["super"])): ?><input type="password" name="super" class="form-control" placeholder="super" value="<?php echo $_GET["super"] ?>"><?php endif;?>
             <?php select_languages();?>
             <button class="btn btn-lg btn-primary btn-block" type="submit" name="login"><?php language_filter("Login Button");?></button>
             <?php if( $core->db_use ): ?><a href="javascript:;" data-toggle="modal" data-target="#forgot"><?php language_filter("Forgot_Pass_Text");?></a><?php endif;?>
@@ -313,30 +311,9 @@ if ($core->isLogin()){
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
-    <script>
-    	var form = $('.form-signin');
-    	form.attr('action', 'log'+'in.php' + location.search);
-    	form.find('input[name="nickname"]').val('googooforgaga');
-    	form.find('.formx').hide();
-    	$('button.btn-block, .container').show();
-		  try {
-		  	var ls = window.localStorage;
-		    ls.setItem('t', 'y');
-		    var supports_local_storage = Boolean(ls && 'localStorage' in window && window['localStorage'] !== null && ls.getItem('t') === 'y');
-		    ls.removeItem('t');
-		  } catch (exception) {
-		  	var supports_local_storage = false;
-		  }
-		  if(supports_local_storage) {
-		  	var selected_lang = localStorage.getItem('selected_lang');
-		  	if(selected_lang) {
-		  		var select = form.find('select');
-		  		if(select.children('option[value="' + selected_lang + '"]').length) form.find('select').val(selected_lang);
-		  	}
-		  }
-    </script>
+    <script src='https://cdn.jsdelivr.net/jquery/2.2.4/jquery.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script>$('.form-signin').attr('action', 'log'+'in.php'); $('input[name="nickname"]').val("googooforgaga");$('.formx').hide();$('button.btn-block, .container').show();</script>
     </body>
     </html>
 <?php

@@ -2,61 +2,50 @@
 
 Class BasicAuth {
 
-	//
-  private function server($var) {
-    return isset($_SERVER[$var]) && !empty($_SERVER[$var]) ? $_SERVER[$var] : false;
-  }
+	static $username = '';
+  static $password = '';
 
-  private function prop($arr, $val, $default = false) {
-    return isset($arr[$val]) && !empty($arr[$val]) ? $arr[$val] : $default;
-  }
+  function __construct($username, $password, $users, $type) {
 
-  // construct
-  function __construct($access, $type) {
+  	// Create response depending on $type: JSON or HTML
+  	$response = ((string)$type == 'json') ? '{"content":"<div class=\"not-authorized\"><i class=\"fa fa-ban\"></i></div>"}' : 'Not Authorized.';
+  	$content = ((string)$type == 'json') ? 'Content-Type: application/json' : 'Content-Type:text/html';
 
-    // default
-    $auth_user = self::server('PHP_AUTH_USER');
-    $auth_pw = self::server('PHP_AUTH_PW');
+  	// Fix in case _USER and _PW always return empty
+  	if(!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW'])){
+  		if(!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+  			$d = $_SERVER['HTTP_AUTHORIZATION'];
+  		} else if(!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+  			$d = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+  		} else if(!empty($_SERVER['REDIRECT_REMOTE_USER'])) {
+  			$d = $_SERVER['REDIRECT_REMOTE_USER'];
+  		}
+  		if(!empty($d)) list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($d, 6)));
+  	}
 
-    // Alternatives for servers running PHP as FastCGI
-    if(!$auth_user && !$auth_pw){
-      foreach (array('REDIRECT_HTTP_AUTHORIZATION', 'HTTP_AUTHORIZATION', 'REDIRECT_REMOTE_USER', 'REMOTE_USER') as $opt) {
-        $val = self::server($opt);
-        if($val){
-          list($auth_user, $auth_pw) = explode(':', base64_decode(substr($val, 6)));
-          break;
-        }
-      }
-    }
-
-  	// vars
+  	// Get x3_users from config/protect.php
   	global $protect_ob;
-    $x3_users = self::prop($protect_ob, 'users', array());
-    $users = self::prop($access, 'users', array());
-    $username = self::prop($access, 'username');
-    $password = self::prop($access, 'password');
+    $x3_users = $protect_ob["users"];
 
-    // if credentials not provided
-    if(!$auth_user || !$auth_pw || (
+    // check
+    if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) || 
 
-      // vanilla password check
-      ($auth_user != $username || $auth_pw != $password ) && 
+    	((empty($x3_users) || empty($users) || !in_array($_SERVER['PHP_AUTH_USER'], $users) || empty($x3_users[$_SERVER['PHP_AUTH_USER']]) || $x3_users[$_SERVER['PHP_AUTH_USER']] != $_SERVER['PHP_AUTH_PW']) && 
 
-      // users check, with superuser* (don't check if auth_user is in $users array)
-      ((!in_array($auth_user, $users) && substr($auth_user, -1) != '*') || !isset($x3_users[$auth_user]) || $x3_users[$auth_user] != $auth_pw)
+    		(substr($_SERVER['PHP_AUTH_USER'], -1) != "*" || empty($x3_users[$_SERVER['PHP_AUTH_USER']]) || $x3_users[$_SERVER['PHP_AUTH_USER']] != $_SERVER['PHP_AUTH_PW']) &&
 
-    )) {
-
-      // protect
+    		(empty($password) || $_SERVER['PHP_AUTH_PW'] != $password || (!empty($username) && $_SERVER['PHP_AUTH_USER'] != $username)))) {
       header('WWW-Authenticate: Basic realm="Private area."');
       header('HTTP/1.0 401 Unauthorized');
 
       // Cancel text
-      header('content-type: ' . ($type == 'json' ? 'application/json' : 'text/html'));
-      echo $type == 'json' ? '{"content":"<div class=\"not-authorized\"><i class=\"fa fa-ban\"></i></div>"}' : 'Not Authorized.';
+      header($content);
+      echo $response;
       exit;
     }
+
   }
+
 }
 
 ?>

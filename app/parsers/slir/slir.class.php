@@ -198,6 +198,12 @@ class SLIR
 
 		$this->request = new SLIRRequest();
 
+		// Check the cache based on the request URI
+		if (SLIRConfig::$useRequestCache === TRUE && $this->isRequestCached())
+		{
+			$this->serveRequestCachedImage();
+		}
+
 		// Set up our error handler after the request cache to help keep
 		// everything humming along nicely
 		require 'slirexception.class.php';
@@ -281,7 +287,17 @@ class SLIR
 	 */
 	private function initializeGarbageCollection()
 	{
-		if ($this->garbageCollectionShouldRun()) $this->collectGarbage();
+		if ($this->garbageCollectionShouldRun())
+		{
+			// Register this as a shutdown function so the additional processing time
+			// will not affect the speed of the request
+			//register_shutdown_function(array($this, 'collectGarbage'));
+			define('SLIR_DIR', __DIR__);
+			register_shutdown_function(function() {
+				chdir(SLIR_DIR);
+				$this->collectGarbage();
+			});
+		}
 	}
 
 	/**
@@ -332,6 +348,7 @@ class SLIR
 	 */
 	public function collectGarbage()
 	{
+		$this->deleteStaleFilesFromDirectory($this->getRequestCacheDir(), FALSE);
 		$this->deleteStaleFilesFromDirectory($this->getRenderedCacheDir());
 	}
 
@@ -850,7 +867,7 @@ class SLIR
 			// PNG needs a compression level of 0 (no compression) through 9
 			$this->rendered->quality		= round(10 - ($this->rendered->quality / 10));
 		}
-		else if ($this->source->isJPEG() || $this->source->isWEBP())
+		else if ($this->source->isJPEG())
 		{
 				$this->rendered->progressive	= ($this->request->progressive !== NULL)
 					? $this->request->progressive : SLIRConfig::$defaultProgressiveJPEG;
@@ -982,6 +999,17 @@ class SLIR
 	}
 
 	/**
+	 * Determines if the request is symlinked to the rendered file
+	 * 
+	 * @since 2.0
+	 * @return boolean
+	 */
+	private function isRequestCached()
+	{
+		return $this->isCached($this->requestCacheFilePath());
+	}
+
+	/**
 	 * Determines if a given file exists in the cache
 	 * 
 	 * @since 2.0
@@ -1002,8 +1030,7 @@ class SLIR
 			return FALSE;
 		}
 
-		//$imageModified	= filectime($this->request->fullPath());
-		$imageModified	= filemtime($this->request->fullPath());
+		$imageModified	= filectime($this->request->fullPath());
 
 		if ($imageModified >= $cacheModified)
 		{
@@ -1042,10 +1069,18 @@ class SLIR
 		return '/' . md5($this->request->fullPath() . serialize($this->rendered->cacheParameters()));
 	}
 
-	/*
-	../../../content/2.galleries/4.style/girl.jpg : a:10:{s:4:"path";s:45:"../../../content/2.galleries/4.style/girl.jpg";s:5:"width";d:958;s:6:"height";d:638;s:9:"cropWidth";d:638;s:10:"cropHeight";d:638;s:4:"iptc";N;s:7:"quality";s:1:"1";s:11:"progressive";b:1;s:10:"background";N;s:7:"cropper";s:8:"centered";}
-	*/
-
+	/**
+	 * @since 2.0
+	 * @return string
+	 */
+	private function requestCacheFilename()
+	{
+		//return '/' . md5($_SERVER['HTTP_HOST'] . '/' . $this->requestURI() . '/' . SLIRConfig::$defaultCropper);
+		$uri = $_SERVER['REQUEST_URI'];
+		$request_path = strpos($uri, 'render/') === FALSE ? $uri : strstr($uri, 'render/');
+		return '/' . md5($request_path);
+	}
+	
 	/**
 	 * @since 2.0
 	 * @return string
@@ -1063,6 +1098,24 @@ class SLIR
 	}*/
 
 	/**
+	 * @since 2.0
+	 * @return string
+	 */
+	private function getRequestCacheDir()
+	{
+		return SLIRConfig::$cacheDir . '/request';
+	}
+
+	/**
+	 * @since 2.0
+	 * @return string
+	 */
+	private function requestCacheFilePath()
+	{
+		return $this->getRequestCacheDir() . $this->requestCacheFilename();
+	}
+
+	/**
 	 * Write an image to the cache
 	 *
 	 * @since 2.0
@@ -1072,7 +1125,15 @@ class SLIR
 	private function cache()
 	{
 		$this->cacheRendered();
-		return TRUE;
+		
+		if (SLIRConfig::$useRequestCache === TRUE)
+		{
+			return $this->cacheRequest($this->rendered->data, TRUE);
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 
 	/**
@@ -1092,6 +1153,24 @@ class SLIR
 	}
 
 	/**
+	 * Write an image to the cache based on the request URI
+	 *
+	 * @since 2.0
+	 * @param string $imageData
+	 * @param boolean $copyEXIF
+	 * @return string
+	 */
+	private function cacheRequest($imageData, $copyEXIF = TRUE)
+	{
+		return $this->cacheFile(
+			$this->requestCacheFilePath(),
+			$imageData,
+			$copyEXIF,
+			$this->renderedCacheFilePath()
+		);
+	}
+
+	/**
 	 * Write an image to the cache based on the properties of the rendered image
 	 *
 	 * @since 2.0
@@ -1101,32 +1180,35 @@ class SLIR
 	 * @param string $symlinkToPath
 	 * @return string|boolean
 	 */
-	private function cacheFile($cacheFilePath, $imageData, $copyEXIF = TRUE)
+	private function cacheFile($cacheFilePath, $imageData, $copyEXIF = TRUE, $symlinkToPath = NULL)
 	{
+		//$this->initializeCache();
+
+		// Try to create just a symlink to minimize disk space
+		if($symlinkToPath && function_exists('symlink') && (file_exists($cacheFilePath) || symlink($symlinkToPath, $cacheFilePath))){
+			return TRUE;
+		}
 
 		// Create the file
-		if(!file_put_contents($cacheFilePath, $imageData)) return FALSE;
+		if (!file_put_contents($cacheFilePath, $imageData))
+		{
+			return FALSE;
+		}
 
-		// X3 copy ICC color profile
-    if(SLIRConfig::$copyICCProfile && $this->source->isJPEG()) $imageData = $this->copyICCProfile($cacheFilePath);
+		/*if (SLIRConfig::$copyEXIF == TRUE && $copyEXIF && $this->source->isJPEG())
+		{
+			// Copy IPTC data
+			if (isset($this->source->iptc) && !$this->copyIPTC($cacheFilePath))
+			{
+				return FALSE;
+			}
 
-    // return
+			// Copy EXIF data
+			$imageData	= $this->copyEXIF($cacheFilePath);
+		} // if*/
+
 		return $imageData;
 	}
-
-
-	// X3 Copy ICC color profile into resized images
-  private function copyICCProfile($cacheFilePath)
-  {
-    require_once __DIR__ . '/icc/class.jpeg_icc.php';
-    try {
-      $o = new JPEG_ICC();
-      $o->LoadFromJPEG($this->source->fullPath());
-      $o->SaveToJPEG($cacheFilePath);
-    } catch (Exception $e) {
-    }
-    return file_get_contents($cacheFilePath);
-  }
 
 	/**
 	 * Copy the source image's EXIF information to the new file in the cache
@@ -1245,6 +1327,17 @@ class SLIR
 	}
 
 	/**
+	 * Serves the image from the cache based on the request URI
+	 *
+	 * @since 2.0
+	 * @return void
+	 */
+	private function serveRequestCachedImage()
+	{
+		return $this->serveCachedImage($this->requestCacheFilePath(), 'request');
+	}
+
+	/**
 	 * Serves the image from the cache
 	 *
 	 * @since 2.0
@@ -1263,6 +1356,14 @@ class SLIR
 			NULL,
 			"$cacheType cache"
 		);
+		
+		// If we are serving from the rendered cache, create a symlink in the
+		// request cache to the rendered file
+		if ($cacheType != 'request')
+		{
+			$this->cacheRequest($data, FALSE);
+		}
+		
 		exit();
 	}
 	

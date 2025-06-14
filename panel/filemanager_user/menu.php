@@ -43,7 +43,7 @@ if ($core->isLogin())
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <?php echo $core->user_menu;?>
-                        <?php $refresh = X3Config::$config["settings"]["menu_manual"] ? '' : ' class=hidden' ?>
+                        <?php $refresh = $x3_config["settings"]["menu_manual"] ? '' : ' class=hidden' ?>
                     		<li id="refresh"<?php echo $refresh; ?>><a href="javascript:;" class="btn btn-primary">Refresh Menu<i class="fa fa-question-circle panel-help" data-help="refresh"></i></a></li>
                     		<li id="website-link"><a href="../" target="_blank" title="<?php language_filter("View_Page");?>"><span class="glyphicon glyphicon-new-window"></span></a></li>
                     </ul>

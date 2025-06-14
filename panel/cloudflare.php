@@ -67,7 +67,8 @@ function request($path, $data = array(), $method = 'get', $permission_level = 'r
 	$curl_options = $default_curl_options;
 
 	//$headers = array("X-Auth-Email: {$cf_email}", "X-Auth-Key: {$cf_key}");
-	$cf_agent = 'ImagevueX3/' . X3Config::$config["x3_version"];
+	global $x3_config;
+	$cf_agent = 'ImagevueX3/' . $x3_config["x3_version"];
 	$headers = array("X-Auth-Email: {$cf_email}", "X-Auth-Key: {$cf_key}", "User-Agent: {$cf_agent}");
 
 	$ch = curl_init();
@@ -227,6 +228,14 @@ function cloudflare() {
 		$a = $_POST['action'];
 		if(isset($_POST['zone_identifier'])) $zid = $_POST['zone_identifier'];
 		if($a == 'zones') {
+
+			// Get domain name
+			/*$domainArray = explode('.', $_SERVER['HTTP_HOST']);
+			$intDomParts = count($domainArray);
+			$domain = $domainArray[$intDomParts-2]. '.' .  $domainArray[$intDomParts-1];*/
+			//$domain = $_SERVER['SERVER_NAME'] ?: $_SERVER['HTTP_HOST'];
+			//$domain = 'alanmacleod.co.uk';
+
 			//return zones($domain);
 			return zones(get_domain($_SERVER['HTTP_HOST']));
 			//return zones('flamepix.com');
@@ -338,7 +347,6 @@ function get_domain($domain)
 // Init
 if ($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
 	header('Content-Type: application/json');
-	if($core->is_guest()) exit('{ "error": "Guest user cannot make changes.", "success": false }');
 	$response = cloudflare() ?: ['success'=>false];
 	echo json_encode($response);
 } else {

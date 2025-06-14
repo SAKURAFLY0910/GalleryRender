@@ -3,13 +3,14 @@
 /* DON'T EDIT THIS FILE! */
 
 // Get config
-require_once dirname(__DIR__) . "/app/x3.config.inc.php";
-X3Config::$config["x3_version"] = '3.34.2';
-X3Config::$config["x3_version_date"] = 1593323543;
-X3Config::$config["x3_panel_version"] = '3.34.2';
-$x3_panel_config = X3Config::$config["back"]["panel"];
-$x3_mail = X3Config::$config["back"]["mail"];
-
+require_once dirname(__DIR__). "/app/x3.config.inc.php";
+global $x3_config;
+$x3_config = getX3Config();
+$x3_config["x3_version"] = '3.23.0';
+$x3_config["x3_version_date"] = 1497291878083;
+$x3_config["x3_panel_version"] = '3.23.2';
+$x3_panel_config = $x3_config["back"]["panel"];
+$x3_mail = $x3_config["back"]["mail"];
 
 // X3 Panel configuration
 
@@ -19,6 +20,7 @@ $x3_mail = X3Config::$config["back"]["mail"];
 
 // database login
 if($x3_panel_config["use_db"]) {
+
 	define("DB_HOST", $x3_panel_config["db_host"]); // Host address of mysql server
 	define("DB_USER", $x3_panel_config["db_user"]); // Username of your mysql server
 	define("DB_PASS", $x3_panel_config["db_pass"]); // Password of your user on mysql server
@@ -28,8 +30,7 @@ if($x3_panel_config["use_db"]) {
 } else {
 	define("SECRET_KEY", "mySecretKey");
 	define("USERNAME", $x3_panel_config["username"]);
-	//define("PASSWORD", md5($x3_panel_config["password"]));
-    define("PASSWORD", $x3_panel_config["password"]);
+	define("PASSWORD", md5($x3_panel_config["password"]));
 	define("FIRSTNAME", $x3_panel_config["first_name"]);
 	define("LASTNAME", $x3_panel_config["last_name"]);
 	define("EMAIL", $x3_panel_config["email"]);
@@ -40,7 +41,7 @@ if($x3_panel_config["use_db"]) {
 global $users;
 /*$users = array(
   "username1" => array(
-    "password" => ("password1"),
+    "password" => md5("password1"),
     "email" => "user1@domain.com",
     "firstname" => "Bob",
     "lastname" => "Dobalina",
@@ -50,7 +51,7 @@ global $users;
     "is_block" => 0
   ),
   "username2" => array(
-    "password" => ("password2"),
+    "password" => md5("password2"),
     "email" => "user2@domain.com",
     "firstname" => "mjau",
     "lastname" => "mjau",
@@ -91,11 +92,11 @@ define("ROOT_DIR_NAME", "../content");
 
 // Allow Extensions
 global $ALLOW_EXTENSIONS;
-$ALLOW_EXTENSIONS = array('rar','zip','txt','html','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp3','ogg','mp4','svg', 'webp', 'js', 'css', 'gpx', 'eot', 'ttf', 'woff', 'woff2', 'otf', 'xml', 'mov', 'webm', 'm4v', 'ogv', 'ico', 'tiff');
+$ALLOW_EXTENSIONS = array('rar','zip','txt','html','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp3','ogg','mp4','svg', 'webp', 'js', 'css');
 
 // Allow Uploader Extensions
 global $ALLOW_UPLOADER;
-$ALLOW_UPLOADER = array('rar','zip','txt','html','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp3','ogg','mp4','svg', 'webp', 'js', 'css', 'gpx', 'eot', 'ttf', 'woff', 'woff2', 'otf', 'xml', 'mov', 'webm', 'm4v', 'ogv', 'ico', 'tiff');
+$ALLOW_UPLOADER = array('rar','zip','txt','html','pdf','jpg','jpeg','png','gif','bmp','psd','flv','mp3','ogg','mp4','svg', 'webp', 'js', 'css');
 
 // Mime type of upload extensions
 global $MIME_TYPES;
@@ -104,7 +105,6 @@ $MIME_TYPES = array(
     "jpeg" => array("image/jpeg", "image/pjpeg", "application/octet-stream"),
     "bmp" => array("image/bmp", "application/octet-stream"),
     "gif" => array("image/gif", "application/octet-stream"),
-    "webp" => array("image/webp", "application/octet-stream"),
     "pdf" => array("application/pdf", "application/zip", "application/octet-stream"),
     "zip" => array("application/zip", "application/octet-stream", "application/download"),
     "rar" => array("application/x-rar-compressed", "application/octet-stream", "application/download", "application/x-rar"),
@@ -123,15 +123,11 @@ $MIME_TYPES = array(
     "mov" => array("video/quicktime", "video/x-quicktime", "image/mov", "audio/aiff", "audio/x-midi", "audio/x-wav", "video/avi", "application/octet-stream"),
     "avi" => array("video/avi", "video/msvideo", "video/x-msvideo", "image/avi", "video/xmpg2", "application/x-troff-msvideo", "audio/aiff", "audio/avi", "application/octet-stream"),
     "js" => array("application/javascript"),
-    "css" => array("text/css"),
-    "gpx" => array("application/gpx", "application/gpx+xml", "application/xml"),
-    "xml" => array("text/xml", "application/xml"),
-    "webm" => array("video/webm", "audio/webm", "video/mp4"),
-    "m4v" => array("video/x-m4v"),
-    "ogv" => array("video/ogg"),
-    "ico" => array("image/x-icon"),
-    "tiff" => array("image/tiff")
+    "css" => array("text/css")
 );
+
+// Only for demo version if you set login to guest/guest
+// define("DEMO_PANEL", true);
 
 // Hide AUTH page.
 // define("HIDE_AUTH", true);

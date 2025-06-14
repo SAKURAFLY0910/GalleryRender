@@ -1,7 +1,7 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 if(!isset($core)){
 	require_once 'filemanager_core.php';
@@ -11,9 +11,6 @@ if(!isset($core)){
 if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
 
 	$json_header = 'Content-Type: application/json; charset=utf-8';
-
-	// exit if guest
-	if(!isset($_POST['session_refresh']) && !isset($_POST['get_templates']) && !isset($_POST['phpinfo']) && $core->is_guest()) exit('{ "error": "Guest user cannot make changes." }');
 
 	# Cache site object
 	if(isset($_POST['site_object'])) {
@@ -35,7 +32,6 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL, $path);
 				curl_setopt($ch, CURLOPT_HEADER, 0);
-				curl_setopt($ch, CURLOPT_USERAGENT, 'x3-curl');
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
 				$site = curl_exec($ch);
@@ -147,7 +143,7 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 			ob_start(); phpinfo(); $s = ob_get_contents(); ob_end_clean();
 
 			# Check if tidy extension is available
-			if(version_compare(PHP_VERSION, '5.4.0', '>=') && extension_loaded('tidy')) {
+			if(extension_loaded('tidy')) {
 				$tidy = tidy_parse_string($s);
 				$mybody = $tidy->Body();
 				$body = $mybody->value;
@@ -185,7 +181,7 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 	# Save custom templates
 	} else if(isset($_POST['save_template'])){
 		header($json_header);
-		$post = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() ? stripslashes($_POST['save_template']) : $_POST['save_template'];
+		$post = get_magic_quotes_gpc() ? stripslashes($_POST['save_template']) : $_POST['save_template'];
 		$config_folder = '../config';
 		$custom_templates_file = '../config/custom-setting-templates.json';
 		$template = json_decode($post, TRUE);
@@ -211,7 +207,7 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 		  }
 		  return $aReturn;
 		}
-		$template = arrayRecursiveDiff($template, X3Config::$config["folders"]);
+		$template = arrayRecursiveDiff($template, $x3_config["folders"]);
 		*/
 
 		if(file_exists($custom_templates_file)){
@@ -267,7 +263,6 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 		      //if(!curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true)) return "FAIL: curl_setopt(CURLOPT_FOLLOWLOCATION)";
 		      if(!curl_setopt($ch, CURLOPT_FILE, $fp)) return "FAIL: curl_setopt(CURLOPT_FILE)";
 		      if(!curl_setopt($ch, CURLOPT_HEADER, 0)) return "FAIL: curl_setopt(CURLOPT_HEADER)";
-					@curl_setopt($ch, CURLOPT_USERAGENT, 'x3-curl');
 		      if(!curl_exec($ch) ) return "FAIL: curl_exec()";
 		      curl_close($ch);
 		      fclose($fp);
@@ -280,8 +275,7 @@ if($core->isLogin() and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower(
 
 		// vars
 		header($json_header);
-		$url = 'https://www.photo.gallery/download/?x3_updater';
-		//$url = 'https://www.flamepix.com/download/?x3_updater';
+		$url = 'https://imagevuex.com/download/?x3_updater';
 		$file = '../x3_updater.php';
 
 		// process

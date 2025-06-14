@@ -2,10 +2,13 @@
 require_once Config::$app_folder.'/parsers/Twig/ExtensionInterface.php';
 require_once Config::$app_folder.'/parsers/Twig/Extension.php';
 
-class X3_Twig_Extension extends Twig_Extension {
+class Stacey_Twig_Extension extends Twig_Extension {
+
+  var $sortby_value;
+  var $sortby_default_value;
 
   public function getName() {
-    return 'X3';
+    return 'Stacey';
   }
 
   public function getFilters() {
@@ -21,121 +24,14 @@ class X3_Twig_Extension extends Twig_Extension {
     # custom Twig functions
     return array(
       //'search' => new Twig_Function_Method($this, 'search'),
+      'sortbydate' => new Twig_Function_Method($this, 'sortbydate'),
       'sortby' => new Twig_Function_Method($this, 'sortby'),
       'debug' => new Twig_Function_Method($this, 'var_dumper'),
       'pebug' => new Twig_Function_Method($this, 'var_dumper_pre'),
       'get' => new Twig_Filter_Method($this, 'get'),
       'slice' => new Twig_Filter_Method($this, 'slice'),
       'resize_path' => new Twig_Filter_Method($this, 'resize_path'),
-      'get_adjacent_siblings' => new Twig_Filter_Method($this, 'get_adjacent_siblings')
     );
-  }
-
-  // get json
-  private function get_json($dir){
-    $file = $dir . '/page.json';
-    if(!file_exists($file)) return array();
-    $content = file_get_contents($file);
-    return $content ? json_decode($content) : array();
-  }
-
-  // get adjacent siblings dir
-  function get_adjacent_siblings($dir){
-
-  	// sort config
-  	$parent = dirname($dir);
-  	$json = array();
-  	if($parent !== './content'){
-  		$file = $parent . '/page.json';
-  		$json_content = file_exists($file) ? @file_get_contents($file) : false;
-  		if(!empty($json_content)) $json = json_decode($json_content, TRUE);
-  	}
-  	$config = array_replace_recursive(X3Config::$config, $json);
-  	$sortby = $config['folders']['sortby'];
-
-  	// siblings dirs
-  	$dirs = Helpers::list_files($parent, false, true);
-  	if(empty($dirs)) return false;
-
-  	// dir object
-  	$dir_object = array();
-  	$keys = array();
-  	$default_index = -9999;
-  	foreach ($dirs as $name => $path) {
-  		$dir_object[$path] = array();
-  		$dir_object[$path]['name'] = $name;
-  		$dir_object[$path]['slug'] = preg_replace('/\d+?\./', '', $name);
-  		if($sortby === 'custom'){
-	  		$content_path = str_replace('./content/', '', $path);
-	  		$dir_object[$path]['index'] = isset(Helpers::$folders[$content_path]['index']) ? Helpers::$folders[$content_path]['index'] : $default_index++;
-
-      // date
-	  	} else if($sortby === 'date'){
-
-        $page_date = false;
-        $page_json_file = $path . '/page.json';
-        $page_json_content = file_exists($page_json_file) ? @file_get_contents($page_json_file) : false;
-        if(!empty($page_json_content)) {
-          $page_json = @json_decode($page_json_content, TRUE);
-          if(!empty($page_json) && isset($page_json['date'])) $page_date = @strtotime($page_json['date']);
-        }
-        $dir_object[$path]['date'] = $page_date ? $page_date : filemtime($path);
-      }
-  	}
-
-  	// custom sort
-  	if($sortby === 'custom'){
-  		uasort($dir_object, function($a, $b){
-		    return $a['index'] > $b['index'] ? 1 : -1;
-	    });
-  	} else if($sortby === 'title'){
-  		uasort($dir_object, function($a, $b){
-		    return strnatcasecmp($a['slug'], $b['slug']);
-	    });
-  	} else if($sortby === 'date'){
-  		uasort($dir_object, function($a, $b){
-		    return $a['date'] > $b['date'] ? 1 : -1;
-	    });
-  	}
-
-  	// reverse sort
-    if($config['folders']['sort'] === 'desc') $dir_object = array_reverse($dir_object);
-
-  	//$dirs = array_flip($dirs);
-  	$keys = array_keys($dir_object);
-  	$index = array_search($dir, $keys);
-  	if($index === false || count($keys) < 2) return false;
-
-    // result array
-    $result = array();
-
-  	// previous
-  	if($index > 0) {
-  		$prev_dir = $keys[$index - 1];
-  		$dir_slug = $dir_object[$prev_dir]['slug'];
-      $page_data = $this->get_json($prev_dir);
-      $label = isset($page_data->label) ? $page_data->label : ucwords(str_replace(array('_', '-'), ' ', $dir_slug));
-  		$result['prev'] = array(
-        'slug' => str_replace(' ', '_', $dir_slug),
-        'label' => $label
-      );
-      if(isset($page_data->title) && $page_data->title != $label) $result['prev']['title'] = $page_data->title;
-  	}
-
-  	// next
-  	if($index < (count($keys) - 1)){
-  		$next_dir = $keys[$index + 1];
-  		$dir_slug = $dir_object[$next_dir]['slug'];
-      $page_data = $this->get_json($next_dir);
-      $label = isset($page_data->label) ? $page_data->label : ucwords(str_replace(array('_', '-'), ' ', $dir_slug));
-      $result['next'] = array(
-        'slug' => str_replace(' ', '_', $dir_slug),
-        'label' => $label
-      );
-      if(isset($page_data->title) && $page_data->title != $label) $result['next']['title'] = $page_data->title;
-  	}
-
-  	return $result;
   }
 
   #
@@ -177,7 +73,7 @@ class X3_Twig_Extension extends Twig_Extension {
   public function var_dumper($input) {
     var_dump( $input );
   }
-
+  
   #
   #   dump out our var for easy debugging ++ Now with Extra Pre's
   #
@@ -244,59 +140,55 @@ class X3_Twig_Extension extends Twig_Extension {
     return array_slice($array, $start, $end);
   }
 
-  // X3 sort by
-  function sortby($object, $value, $reverse = false) {
+  #
+  #   sort by date-based subvalue
+  #
+  public function custom_date_sort($a, $b) {
+    //return strtotime($a[$this->sortby_value]) > strtotime($b[$this->sortby_value]);
+    return $a[$this->sortby_value] > $b[$this->sortby_value];
+  }
+
+  function sortbydate($object, $value) {
+    $this->sortby_value = $value;
     $sorted = array();
-    $default_index = -9999;
-
-    if(is_array($object)) {
-
-    	// stop immediately if array is empty
-    	if(empty($object)) return $sorted;
-
-    	# expand sub variables if required
-      foreach($object as $key => $val) {
-        if(is_string($val)) {
-        	//$sorted[] =& AssetFactory::get($val);
-        	$sort_el =& AssetFactory::get($val);
-        	// don't include hidden
-        	//if($sort_el && (!isset($sort_el['hidden']) || empty($sort_el['hidden']))) $sorted[] =& $sort_el;
-        	if($sort_el && (!isset($sort_el['hidden']) || empty($sort_el['hidden']))) {
-        		$sorted[$val] =& $sort_el;
-        		if(!$sorted[$val]['index']) $sorted[$val]['index'] = $default_index++;
-        	}
-        }
+    # expand sub variables if required
+    if (is_array($object)) {
+      foreach ($object as $key) {
+        if (is_string($key)) $sorted[] =& AssetFactory::get($key);
       }
     }
+    # sort the array
+    uasort($sorted, array($this, 'custom_date_sort'));
+    return $sorted;
+  }
 
-    // name, title, date, shuffle, custom
+  #
+  #   sort by subvalue using natural string comparison
+  #
+  public function custom_str_sort($a, $b) {
+  	$sortby = $this->sortby_value;
+  	$default = $this->sortby_default_value;
+  	$x = isset($a[$sortby]) ? $a[$sortby] : (!empty($default) && isset($a[$default]) ? $a[$default] : 0);
+  	$y = isset($b[$sortby]) ? $b[$sortby] : (!empty($default) && isset($b[$default]) ? $b[$default] : 0);
 
-    // stop processing if sort method is shuffle
-    if($value === 'shuffle') return $sorted;
+  	//$x = $a[$this->sortby_value] ? $a[$this->sortby_value] : $a[$this->sortby_default_value];
+  	//$y = $b[$this->sortby_value] ? $b[$this->sortby_value] : $b[$this->sortby_default_value];
+    return strnatcasecmp($x, $y);
+    //strnatcmp($a[$this->sortby_value], $b[$this->sortby_value]);
+  }
 
-    // date sort
-    if($value === 'date'){
-	    uasort($sorted, function($a, $b){
-		  	return $a['date'] > $b['date'] ? 1 : -1;
-	    });
-
-	  // title sort
-    } else if($value === 'title'){
-	    uasort($sorted, function($a, $b){
-		    return strnatcasecmp($a['sort_title'], $b['sort_title']);
-	    });
-
-	  // custom sort (index)
-    } else if($value === 'custom'){
-	    uasort($sorted, function($a, $b){
-		    return $a['index'] > $b['index'] ? 1 : -1;
-	    });
+  function sortby($object, $value, $default = null) {
+    $this->sortby_value = $value;
+    $this->sortby_default_value = $default;
+    $sorted = array();
+    # expand sub variables if required
+    if (is_array($object)) {
+      foreach ($object as $key) {
+        if (is_string($key)) $sorted[] =& AssetFactory::get($key);
+      }
     }
-
-    // reverse sort
-    if($reverse) $sorted = array_reverse($sorted);
-
-    // return
+    # sort the array
+    uasort($sorted, array($this, 'custom_str_sort'));
     return $sorted;
   }
 
@@ -306,7 +198,7 @@ class X3_Twig_Extension extends Twig_Extension {
   function absolute($relative_path) {
     $server_name = (($_SERVER['HTTPS'] ? 'https://' : 'http://')).$_SERVER['HTTP_HOST'];
     $relative_path = preg_replace(array('/^\/content/', '/^(\.+\/)*/'), '', $relative_path);
-    return $server_name.str_replace('/index.php', $relative_path, Helpers::script_name());
+    return $server_name.str_replace('/index.php', $relative_path, $_SERVER['SCRIPT_NAME']);
   }
 
   function truncate($value, $length = 30, $preserve = false, $separator = '...') {

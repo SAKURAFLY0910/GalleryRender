@@ -15,7 +15,7 @@ function set_new_name_for_file( $path, $name )
     $new_ext = explode(".", $name);
     $ext = end($new_ext);
     unset($new_ext[count($new_ext) - 1]);
-		$new_name = implode(".", $new_ext);
+    $new_name = implode($new_ext, ".");
     $new_name .= $extra_num.".".$ext;
     if( file_exists( $path.$new_name ) )
     {
@@ -45,28 +45,6 @@ function little_name_filter($name)
     return $newName;
 }
 
-// check  image orientation before rotation
-function check_orientation($path, $ext) {
-
-    // proceed if extension is image
-    if(empty($ext) || !in_array($ext, ['png', 'jpg', 'jpeg']) || !function_exists('exif_read_data') || !file_exists($path) || !is_writable($path)) return false;
-
-    // Get all the exif data from the file
-    $exif = @exif_read_data($path);
-
-    // If we dont get any exif data at all, then we may as well stop now
-    if(empty($exif) || !is_array($exif)) return false;
-
-    // get $orientation
-    $orientation = isset($exif['Orientation']) ? (int)$exif['Orientation'] : (isset($exif['orientation']) ? (int)$exif['orientation'] : 0);
-    if($orientation < 2 || $orientation > 8) return false;
-
-    // proceed
-    require(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'x3.image-orientation.php');
-    fix_orientation($orientation, $path, $ext, X3Config::$config["back"]["panel"]["upload_resize"]["quality"]);
-}
-
-//
 if ($core->isLogin())
 {
     if( isset( $_GET["action"] ) and $_GET["action"] == "delete_file" and isset( $_GET["delete_file_dir"] ) and isset( $_GET["delete_file_path"] ) ) {
@@ -102,7 +80,7 @@ if ($core->isLogin())
             if( isset( $mim_types->zip ) ) {
                 array_push( $mim_types->zip, "application/x-zip-compressed" );
             }
-            /*if( isset( $mim_types->docx ) ) {
+            if( isset( $mim_types->docx ) ) {
                 array_push( $mim_types->docx, "application/msword" );
             }
             if( isset( $mim_types->xlsx ) ) {
@@ -114,24 +92,19 @@ if ($core->isLogin())
             if(class_exists('finfo'))
             {
                 $finfo = new finfo(FILEINFO_MIME);
-            }*/
+            }
             $size = ($size * 1024) * 1024;
             $_result["files"] = array();
             $name = "";
             $ret["status"] = 'Error';
             $ret["msg"] = "";
 
-            /*$temp = explode(".", $_FILES["datafile"]["name"]);
+            $temp = explode(".", $_FILES["datafile"]["name"]);
             $extension = end($temp);
-            $extension = strtolower($extension);*/
-
-            // extension
-            $extension = strtolower(pathinfo($_FILES["datafile"]["name"], PATHINFO_EXTENSION));
-
-            // mime type
+            $extension = strtolower($extension);
             $mim_type = strtolower($_FILES["datafile"]["type"]);
-            if(class_exists('finfo') && $_FILES["datafile"]["tmp_name"]){
-            		$finfo = new finfo(FILEINFO_MIME);
+            if(class_exists('finfo') && $_FILES["datafile"]["tmp_name"])
+            {
                 $mim_type = $finfo->file($_FILES["datafile"]["tmp_name"]);
                 if(strpos($mim_type, ";"))
                 {
@@ -139,31 +112,27 @@ if ($core->isLogin())
                     $mim_type = $mim_type[0];
                 }
             }
-
-            // check if extension is allowed and mime type is not php-ish
-            if (in_array($extension, $allowedExts) && stripos($mim_type, 'php') === false) {
-
-
-            /*if (in_array($extension, $allowedExts)) {
+            if (in_array($extension, $allowedExts))
+            {
                 if(isset($mim_types->$extension))
                 {
                     if (in_array($mim_type, $mim_types->$extension))
-                    {*/
-                        if ($_FILES["datafile"]["error"] > 0) {
+                    {
+                        /*if($_FILES["datafile"]["size"] > $size)
+                        {
+                            $ret["msg"] = language_filter("Size Error", true).': ' . $_FILES["datafile"]["name"];
+                        }
+                        else */if ($_FILES["datafile"]["error"] > 0)
+                        {
                             $ret["msg"] = language_filter("Return Code", true).': ' . $_FILES["datafile"]["error"];
-                        } else {
-                            //$name = $_FILES["datafile"]["name"];
-                            $name = str_replace('%22', '"', $_FILES["datafile"]["name"]);
-
-                            // PHP image orientation (if not oriented by resizer)
-                            check_orientation($_FILES["datafile"]["tmp_name"], $extension);
-
-                            //
+                        }
+                        else
+                        {
+                            $name = $_FILES["datafile"]["name"];
                             if (file_exists($_POST["uploadDir"] . $_FILES["datafile"]["name"]))
                             {
                                 $name = set_new_name_for_file($_POST["uploadDir"], $name);
                             }
-
                             if(move_uploaded_file($_FILES["datafile"]["tmp_name"], $_POST["uploadDir"] . $name))
                             {
                                 $ret["status"] = "Success";
@@ -174,13 +143,19 @@ if ($core->isLogin())
                                 $ret["msg"] = language_filter("Can not upload", true).' '.$name;
                             }
                         }
-                    /*} else {
+                    }
+                    else
+                    {
                         $ret["msg"] = language_filter("Invalid file", true).': '.$_FILES["datafile"]["name"];
                     }
                 }
                 else
                 {
-                    if ($_FILES["datafile"]["error"] > 0)
+                    /*if($_FILES["datafile"]["size"] > $size)
+                    {
+                        $ret["msg"] = language_filter("Size Error", true).': ' . $_FILES["datafile"]["name"];
+                    }
+                    else */if ($_FILES["datafile"]["error"] > 0)
                     {
                         $ret["msg"] = language_filter("Return Code", true).': ' . $_FILES["datafile"]["error"];
                     }
@@ -201,8 +176,10 @@ if ($core->isLogin())
                             $ret["msg"] = language_filter("Can not upload", true).' '.$name;
                         }
                     }
-                }*/
-            } else {
+                }
+            }
+            else
+            {
                 echo $ret["msg"] = language_filter("Invalid file", true).': '.$_FILES["datafile"]["name"];
             }
 
@@ -211,15 +188,14 @@ if ($core->isLogin())
             $url = str_replace( "../", "", $url );
             $ext = pathinfo( $_POST["uploadDir"].$name, PATHINFO_EXTENSION );
             $ext = strtolower($ext);
-            if(in_array($ext, array('png', 'jpg', 'jpeg', 'gif'))) {
+            //if($ext == "jpg" or $ext == "png" or $ext == "gif" or $ext == "jpeg") {
+            if($ext == "jpg" or $ext == "jpeg") {
                 $thumbnail_url = $url;
-                //list($image_width, $image_height) = getimagesize($url);
-								list($image_width, $image_height) = getimagesize($_POST["uploadDir"].$name); // use internal path, not url
-            } else {
-                $thumbnail_url = "filemanager_assets/file.png";
-                $image_width = false;
-                $image_height = false;
             }
+            else {
+                $thumbnail_url = "filemanager_img/file.png";
+            }
+            list($image_width, $image_height) = getimagesize($url);
             $info = array(
                 "url" => $url,
                 "thumbnailUrl" => $thumbnail_url,
@@ -246,6 +222,111 @@ if ($core->isLogin())
             $core->touchme();
             echo $core->_encode( $_result );
             die();
+
+
+            /* OLD UPLOADER */
+            /*$count = 0;
+            $notification_info["fullname"] = $core->user_firstname." ".$core->user_lastname;
+            $notification_info["username"] = $core->user_username;
+            $notification_info["email"] = $core->user_email;
+            $notification_info["date"] = date("Y-m-d H:i:s");
+            $notification_info["folder"] = $_POST["uploadDir"];
+            $notification_info["list_of_files"] = array();
+            $notification_info["id"] = $core->user_id;
+
+            foreach ($_FILES['datafile']['name'] as $filename)
+            {
+                $temp = explode(".", $_FILES["datafile"]["name"][$count]);
+                $extension = end($temp);
+                $extension = strtolower($extension);
+                $mim_type = strtolower($_FILES["datafile"]["type"][$count]);
+                if(class_exists('finfo'))
+                {
+                    $mim_type = $finfo->file($_FILES["datafile"]["tmp_name"][$count]);
+                    if(strpos($mim_type, ";"))
+                    {
+                        $mim_type = explode(";", $mim_type);
+                        $mim_type = $mim_type[0];
+                    }
+                }
+                if (in_array($extension, $allowedExts))
+                {
+                    if(isset($mim_types->$extension))
+                    {
+                        if (in_array($mim_type, $mim_types->$extension))
+                        {
+                            /*if($_FILES["datafile"]["size"][$count] > $size)
+                            {
+                                echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Size Error", true).': ' . $_FILES["datafile"]["name"][$count].'</div>';
+                            }
+                            if ($_FILES["datafile"]["error"][$count] > 0)
+                            {
+                                echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Return Code", true).': ' . $_FILES["datafile"]["error"][$count].'</div>';
+                            }
+                            else
+                            {
+                                $name = $_FILES["datafile"]["name"][$count];
+                                if (file_exists($_POST["uploadDir"] . $_FILES["datafile"]["name"][$count]))
+                                {
+                                    $name = set_new_name_for_file($_POST["uploadDir"], $name);
+                                }
+                                if(move_uploaded_file($_FILES["datafile"]["tmp_name"][$count], $_POST["uploadDir"] . $name))
+                                {
+                                    echo '<div class="alert alert-success" style="text-align: center;">'.$name.' '.language_filter("has been uploaded.", true).'</div>';
+                                    array_push($notification_info["list_of_files"], $_FILES["datafile"]["name"][$count]);
+                                }
+                                else
+                                {
+                                    echo '<div class="alert alert-success" style="text-align: center;">'.language_filter("Can not upload", true).' '.$name.'.</div>';
+                                }
+                            }
+                        }
+                        else
+                        {
+                            echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Invalid file", true).': '.$_FILES["datafile"]["name"][$count].'</div>';
+                        }
+                    }
+                    else
+                    {
+                        /*if($_FILES["datafile"]["size"][$count] > $size)
+                        {
+                            echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Size Error", true).': ' . $_FILES["datafile"]["name"][$count].'</div>';
+                        }
+                        if ($_FILES["datafile"]["error"][$count] > 0)
+                        {
+                            echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Return Code", true).': ' . $_FILES["datafile"]["error"][$count].'</div>';
+                        }
+                        else
+                        {
+                            $name = $_FILES["datafile"]["name"][$count];
+                            if (file_exists($_POST["uploadDir"] . $_FILES["datafile"]["name"][$count]))
+                            {
+                                $name = set_new_name_for_file($_POST["uploadDir"], $name);
+                            }
+                            if(move_uploaded_file($_FILES["datafile"]["tmp_name"][$count], $_POST["uploadDir"] . $name))
+                            {
+                                echo '<div class="alert alert-success" style="text-align: center;">'.$name.' '.language_filter("has been uploaded.", true).'</div>';
+                                array_push($notification_info["list_of_files"], $_FILES["datafile"]["name"][$count]);
+                            }
+                            else
+                            {
+                                echo '<div class="alert alert-success" style="text-align: center;">'.language_filter("Can not upload", true).' '.$name.'.</div>';
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    echo '<div class="alert alert-danger" style="text-align: center;">'.language_filter("Invalid file", true).': '.$_FILES["datafile"]["name"][$count].'</div>';
+                }
+                $count++;
+            }*/
+            /*if(!empty($notification_info["list_of_files"]))
+            {
+                require_once "../filemanager_assets/send_notify.php";
+                $send = new send_notifications();
+                $send->send_mails($notification_info);
+            }*/
         }
 	}
 }

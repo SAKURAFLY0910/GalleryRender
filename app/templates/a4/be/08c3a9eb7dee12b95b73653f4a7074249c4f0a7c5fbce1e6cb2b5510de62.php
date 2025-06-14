@@ -32,13 +32,13 @@ class __TwigTemplate_a4be08c3a9eb7dee12b95b73653f4a7074249c4f0a7c5fbce1e6cb2b551
             if (twig_in_filter("/", $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "image"))) {
                 // line 9
                 echo "\t\t";
-                $context["page_image"] = ("./content" . call_user_func_array($this->env->getFilter('replace')->getCallable(), array(call_user_func_array($this->env->getFilter('replace')->getCallable(), array(("/" . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "image")))), array("{{files}}" => "custom/files", "content/" => "", "./" => ""))), array("//" => "/"))));
+                $context["page_image"] = ("./content" . call_user_func_array($this->env->getFilter('replace')->getCallable(), array(call_user_func_array($this->env->getFilter('replace')->getCallable(), array(("/" . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "image")))), array("{{files}}" => "custom/files", "content/" => "", "./" => ""))), array("//" => "/"))));
                 // line 10
                 echo "\t";
             } else {
                 // line 11
                 echo "\t\t";
-                $context["page_image"] = (($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "file_path") . "/") . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->env, $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "image"))));
+                $context["page_image"] = (($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "file_path") . "/") . call_user_func_array($this->env->getFilter('trim')->getCallable(), array($this->getAttribute((isset($context["page"]) ? $context["page"] : null), "image"))));
                 // line 12
                 echo "\t";
             }
@@ -84,27 +84,11 @@ class __TwigTemplate_a4be08c3a9eb7dee12b95b73653f4a7074249c4f0a7c5fbce1e6cb2b551
             // line 34
             echo "\t";
             $context["url"] = call_user_func_array($this->env->getFilter('first')->getCallable(), array($this->env, $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "images")));
-            // line 35
-            echo "
-";
-        } elseif ((call_user_func_array($this->env->getFilter('length')->getCallable(), array($this->env, $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "children"))) > 0)) {
-            // line 38
-            echo "\t";
-            $context["first_child_page"] = call_user_func_array($this->env->getFilter('first')->getCallable(), array($this->env, $this->getAttribute((isset($context["page"]) ? $context["page"] : null), "children")));
-            // line 39
-            echo "\t";
-            if ((!call_user_func_array($this->env->getTest('empty')->getCallable(), array(call_user_func_array($this->env->getFilter('first')->getCallable(), array($this->env, $this->getAttribute((isset($context["first_child_page"]) ? $context["first_child_page"] : null), "images"))))))) {
-                // line 40
-                echo "\t\t";
-                $context["url"] = call_user_func_array($this->env->getFilter('first')->getCallable(), array($this->env, $this->getAttribute((isset($context["first_child_page"]) ? $context["first_child_page"] : null), "images")));
-                // line 41
-                echo "\t";
-            }
         }
-        // line 43
+        // line 36
         echo "
 ";
-        // line 45
+        // line 38
         echo (isset($context["url"]) ? $context["url"] : null);
         echo "
 ";
@@ -123,6 +107,6 @@ class __TwigTemplate_a4be08c3a9eb7dee12b95b73653f4a7074249c4f0a7c5fbce1e6cb2b551
 
     public function getDebugInfo()
     {
-        return array (  108 => 45,  101 => 41,  98 => 40,  95 => 39,  92 => 38,  88 => 35,  85 => 34,  81 => 31,  78 => 30,  74 => 27,  71 => 26,  64 => 22,  59 => 19,  52 => 16,  49 => 15,  43 => 12,  34 => 9,  163 => 68,  156 => 67,  152 => 64,  148 => 62,  145 => 61,  142 => 60,  138 => 57,  135 => 56,  131 => 53,  128 => 52,  125 => 51,  122 => 50,  119 => 49,  117 => 48,  114 => 47,  111 => 46,  105 => 43,  102 => 42,  99 => 40,  96 => 39,  93 => 37,  90 => 36,  87 => 35,  82 => 34,  79 => 33,  76 => 32,  73 => 30,  70 => 29,  67 => 23,  65 => 26,  62 => 21,  60 => 23,  58 => 22,  55 => 17,  53 => 19,  46 => 13,  42 => 15,  39 => 13,  37 => 10,  35 => 11,  33 => 10,  31 => 8,  29 => 7,  26 => 5,  24 => 4,  50 => 17,  45 => 6,  40 => 11,  38 => 4,  21 => 2,  19 => 1,);
+        return array (  92 => 38,  89 => 36,  85 => 34,  81 => 31,  78 => 30,  74 => 27,  71 => 26,  67 => 23,  55 => 17,  52 => 16,  49 => 15,  40 => 11,  34 => 9,  31 => 8,  29 => 7,  26 => 5,  24 => 4,  21 => 2,  223 => 85,  220 => 83,  217 => 82,  215 => 81,  212 => 79,  208 => 77,  205 => 76,  202 => 75,  198 => 72,  195 => 70,  181 => 69,  177 => 67,  174 => 66,  171 => 65,  168 => 64,  165 => 63,  162 => 62,  159 => 61,  157 => 60,  154 => 59,  151 => 58,  145 => 55,  142 => 54,  139 => 52,  137 => 51,  134 => 50,  116 => 49,  113 => 47,  110 => 46,  107 => 45,  104 => 44,  101 => 43,  98 => 41,  95 => 40,  90 => 39,  87 => 38,  84 => 36,  82 => 35,  79 => 33,  77 => 32,  75 => 31,  72 => 29,  68 => 27,  64 => 22,  62 => 21,  59 => 19,  57 => 21,  54 => 19,  50 => 18,  46 => 13,  43 => 12,  41 => 14,  39 => 13,  37 => 10,  35 => 11,  33 => 10,  30 => 8,  28 => 7,  25 => 4,  23 => 3,  19 => 1,);
     }
 }

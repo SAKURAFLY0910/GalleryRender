@@ -1,6 +1,6 @@
 <?php
 if(version_compare(PHP_VERSION, '5.3.0', '>=')) exit();
-$self = $_SERVER['SCRIPT_NAME'];
+$self = $_SERVER['PHP_SELF'];
 $css_path = basename($self) === 'index.php' ? dirname($self) : dirname(dirname($self));
 if(substr($css_path, -1) !== '/') $css_path .= '/';
 ?>
@@ -9,7 +9,7 @@ if(substr($css_path, -1) !== '/') $css_path .= '/';
 <title>Outdated PHP</title>
 <meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,600" rel="stylesheet">
-<link href="<?php echo $css_path ?>app/public/css/diagnostics.css?v=3.25.0" rel="stylesheet" type="text/css">
+<link href="<?php echo $css_path ?>app/public/css/diagnostics.css?v=3.23.0" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div class="x3-diagnostics">

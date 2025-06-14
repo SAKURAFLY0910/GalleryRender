@@ -11,9 +11,6 @@ $denied = '<strong>Permission denied</strong><br>You need to be logged in to acc
 
 if($core->isLogin()){
 
-	// exit if guest
-	if($core->is_guest()) exit('{ "error": "Guest user cannot make changes." }');
-
 	chdir('../');
 
 	# vars
@@ -33,38 +30,32 @@ if($core->isLogin()){
   	$error = $error_msg;
   }
 
+  # $dir
+  $dir = rtrim(dirname(dirname($_SERVER['PHP_SELF'])), '/') . '/';
+
   # touch
 	if(!touch('content')) {
 		echo $core->touchme_error();
 
-	// write menu
-	} else {
+	# json
+	} else if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
 
-		// include helpers and create folders ob
-		include './app/helpers.inc.php';
-	  $dir = rtrim(dirname(dirname(Helpers::script_name())), '/') . '/';
-		Helpers::get_folders();
+		# json header
+		header('Content-Type: application/json');
 
-		# json
-		if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-
-			# json header
-			header('Content-Type: application/json');
-
-			# write menu
-			if($error === false && Menu::write_menu($dir)) {
-				echo '{ "success": true }';
-			} else {
-				echo '{ "error": "' . $error . '" }';
-			}
-
-		# direct access
+		# write menu
+		if($error === false && Menu::write_menu($dir)) {
+			echo '{ "success": true }';
 		} else {
-			if($error === false && Menu::write_menu($dir)) {
-				echo $success;
-			} else {
-				echo $error;
-			}
+			echo '{ "error": "' . $error . '" }';
+		}
+
+	# direct access
+	} else {
+		if($error === false && Menu::write_menu($dir)) {
+			echo $success;
+		} else {
+			echo $error;
 		}
 	}
 

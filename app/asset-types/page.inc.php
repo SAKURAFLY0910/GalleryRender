@@ -11,7 +11,7 @@ Class Page {
   var $all_pages;
 	var $is_protected = false;
 
-  function __construct($url, $content = false, $file_path = '', $current_page = false, $is_protected = false) {
+  function __construct($url, $content = false, $file_path, $current_page = false, $is_protected = false) {
 
   	# is protected
   	$this->is_protected = $is_protected;
@@ -34,15 +34,10 @@ Class Page {
 
 	    $this->template_name = $is_file ? 'file' : 'page';
 
-	    $this->template_file = $current_page ? self::template_file($this->template_name) : Config::$templates_folder.'/page.html';
+	    $this->template_file = $current_page ? self::template_file($this->template_name) : Config::$templates_folder.'/page.html';;
 
     }
     $this->url_path = $url;
-
-    // sort index
-    $content_path = str_replace('./content/', '', isset($this->file_path) && !empty($this->file_path) ? $this->file_path : '');
-    $index = isset(Helpers::$folders[$content_path]['index']) ? Helpers::$folders[$content_path]['index'] : 0;
-    $this->index = $index ? $index : 0;
 
     //$this->template_type = self::template_type($this->template_file);
     $this->template_type = $current_page ? self::template_type($this->template_file) : 'html';
@@ -67,10 +62,13 @@ Class Page {
   }
 
   static function template_file($template_name) {
-  	/*$segment = explode('/', $_SERVER['REQUEST_URI']);
+  	$segment = explode('/', $_SERVER['REQUEST_URI']);
   	$last_segment = end($segment);
-    $ext = stripos($last_segment, '.json') !== false ? 'json' : 'html';*/
-    $ext = strpos($_SERVER['REQUEST_URI'], '.json') ? 'json' : 'html';
+  	if(stripos($last_segment, '.json') !== false) {
+  		$ext = 'json';
+  	} else {
+  		$ext = 'html';
+  	}
   	return Config::$templates_folder.'/'.$template_name.'.'.$ext;
   }
 

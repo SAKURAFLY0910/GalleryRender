@@ -24,23 +24,23 @@ if ($core->isLogin())
       if($favicon) echo '<link rel="icon" href="../content/custom/favicon/' . $favicon . '">';
       ?>
 
-      <!-- Critical CSS Stylesheets -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet" />
-      <link href="https://fonts.bunny.net/css?family=montserrat:500|source-sans-pro:400,400i,600,600i" rel="stylesheet">
-      <link href="filemanager_css/x3.panel.min.css?v=<?php echo X3Config::$config["x3_panel_version"]; ?>" rel="stylesheet" />
+      <!-- CSS Stylesheets -->
+      	<link href='https://cdn.jsdelivr.net/photoswipe/4.1.2/photoswipe.css' rel='stylesheet' />
+      	<link href='https://cdn.jsdelivr.net/photoswipe/4.1.2/default-skin/default-skin.css' rel='stylesheet' />
+        <link href='https://cdn.jsdelivr.net/bootstrap/3.0.0/css/bootstrap.min.css' rel='stylesheet' />
+        <link href='https://cdn.jsdelivr.net/fontawesome/4.6.1/css/font-awesome.min.css' rel='stylesheet'>
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Source+Sans+Pro:400,400i,600,600i" rel="stylesheet">
+        <link href='filemanager_css/x3.panel.css?v=<?php echo $x3_config["x3_panel_version"]; ?>' rel='stylesheet' />
 
-     	<?php
-      if(!$core->is_basedir() && !isset($_SESSION['filemanager_super'])){
-      	// load custom panel.css from parent of X3 installation if exists
-      	if(file_exists('../../../panel.css')) echo '<style><!--' . file_get_contents('../../../panel.css') . '--></style>';
-      	if(file_exists('../../../../panel.css')) echo '<style><!--' . file_get_contents('../../../../panel.css') . '--></style>';
-      }
-    	// load custom custom.css from panel folder if exists
-    	if(file_exists('../custom.css'))echo '<style><!--' . file_get_contents('../custom.css') . '--></style>';
-    	// load /config/panel.css if exists
-    	if(file_exists('../../config/panel.css'))echo '<style><!--' . file_get_contents('../../config/panel.css') . '--></style>';
-    	?>
+       	<?php
+	      	/* <!-- load custom panel.css from parent of X3 installation if exists --> */
+	      	if(file_exists('../../../panel.css')) echo '<style><!--' . file_get_contents('../../../panel.css') . '--></style>';
+	      	if(file_exists('../../../../panel.css')) echo '<style><!--' . file_get_contents('../../../../panel.css') . '--></style>';
+	      	/* <!-- load custom custom.css from panel folder if exists --> */
+	      	if(file_exists('../custom.css'))echo '<style><!--' . file_get_contents('../custom.css') . '--></style>';
+	      	/* <!-- load /config/panel.css if exists --> */
+	      	if(file_exists('../../config/panel.css'))echo '<style><!--' . file_get_contents('../../config/panel.css') . '--></style>';
+      	?>
 
 
       <style>
