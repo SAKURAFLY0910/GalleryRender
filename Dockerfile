@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd zip
     
-RUN chmod -R 777 /var/www/html/content
+
 
 # 拷贝你的 PHP 项目到容器中
 COPY . /var/www/html/
